@@ -35,7 +35,7 @@ gettmode()
 	GT = (tty.sg_flags & XTABS) != XTABS && !XT;
 	NONL = (tty.sg_flags & CRMOD) == 0;
 #else
-	if (ioctl(1, TCGETA, (char *) &tty) < 0)
+	if (tcgetattr(1, &tty) < 0)
 		return;
 	if (ospeed != (tty.c_cflag & CBAUD))	/* mjm */
 		value(SLOWOPEN) = (tty.c_cflag & CBAUD) < B1200;

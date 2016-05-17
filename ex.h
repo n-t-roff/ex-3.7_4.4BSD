@@ -51,6 +51,7 @@
  */
 
 #define	MAXBSIZE	1024	/* Maximum block size */
+#include <sys/ioctl.h>
 #ifndef	vms
 #include <sys/param.h>
 #else
@@ -79,7 +80,7 @@
  *	probably blow the compilation if we goof up.
  */
 #ifdef USG3TTY
-#include <termio.h>
+#include <termios.h>
 #define CBREAK xxxxx
 #else
 #ifndef	vms
