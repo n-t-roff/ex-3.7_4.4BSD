@@ -97,7 +97,7 @@ var	bool	DB;		/* Display may be retained below */
 var	bool	EO;		/* Can erase overstrikes with ' ' */
 var	bool	GT;		/* Gtty indicates tabs */
 var	bool	HC;		/* Hard copy terminal */
-var	bool	HZ;		/* Hazeltine ~ braindamage */
+var	bool	ex_HZ;		/* Hazeltine ~ braindamage */
 var	bool	IN;		/* Insert-null blessing */
 var	bool	MI;		/* can move in insert mode */
 var	bool	NC;		/* No Cr - \r snds \r\n then eats \n (dm2500) */

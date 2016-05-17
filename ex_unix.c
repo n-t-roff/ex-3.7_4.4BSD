@@ -284,13 +284,7 @@ filter(mode)
 	if (mode & 1) {
 		if(FIXUNDO)
 			undap1 = undap2 = addr2+1;
-		if (fstat(io, &statb) < 0)
-			bsize = LBSIZE;
-		else {
-			bsize = statb.st_blksize;
-			if (bsize <= 0)
-				bsize = LBSIZE;
-		}
+		bsize = LBSIZE;
 		ignore(append(getfile, addr2));
 #ifdef TRACE
 		if (trace)

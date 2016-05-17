@@ -17,7 +17,7 @@ static char sccsid[] = "@(#)ex_io.c	8.1 (Berkeley) 6/9/93";
 #include "ex_tty.h"
 #include "ex_vis.h"
 #include <sys/file.h>
-#include <sys/exec.h>
+#include <a.out.h>
 #include "pathnames.h"
 
 /*
@@ -428,7 +428,7 @@ rop(c)
 		if (i != sizeof(head))
 			break;
 #ifndef vms
-		switch ((int)head.a_magic) {
+		switch (N_MAGIC(head)) {
 
 		case 0405:	/* data overlay on exec */
 		case OMAGIC:	/* unshared */
@@ -549,13 +549,7 @@ rop2()
 	deletenone();
 	clrstats();
 	first = addr2 + 1;
-	if (fstat(io, &statb) < 0)
-		bsize = LBSIZE;
-	else {
-		bsize = statb.st_blksize;
-		if (bsize <= 0)
-			bsize = LBSIZE;
-	}
+	bsize = LBSIZE;
 	ignore(append(getfile, addr2));
 	last = dot;
 	/*
@@ -894,13 +888,7 @@ int isfilter;
 	cntln = addr2 - a1 + 1;
 	if (cntln == 0)
 		return;
-	if (fstat(io, &statb) < 0)
-		bsize = LBSIZE;
-	else {
-		bsize = statb.st_blksize;
-		if (bsize <= 0)
-			bsize = LBSIZE;
-	}
+	bsize = LBSIZE;
 	nib = bsize;
 	fp = genbuf;
 	do {

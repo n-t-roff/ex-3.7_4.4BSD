@@ -47,7 +47,6 @@ char *file, *buf;
 		return(-1);
 	}
 	ibuf = buf;
-	b_size = statb.st_blksize;
 	return(fd);
 }
 

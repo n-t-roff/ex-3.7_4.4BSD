@@ -188,8 +188,10 @@ main(ac, av)
 	ruptible = signal(SIGINT, SIG_IGN) == SIG_DFL;
 	if (signal(SIGTERM, SIG_IGN) == SIG_DFL)
 		signal(SIGTERM, onhup);
+#ifdef SIGEMT
 	if (signal(SIGEMT, SIG_IGN) == SIG_DFL)
 		signal(SIGEMT, onemt);
+#endif
 
 	/*
 	 * Process flag arguments.

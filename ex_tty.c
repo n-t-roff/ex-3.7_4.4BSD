@@ -56,7 +56,7 @@ char **sstrs[] = {
 	&AL_PARM, &DL_PARM, &UP_PARM, &DOWN_PARM, &LEFT_PARM, &RIGHT_PARM
 };
 bool *sflags[] = {
-	&AM, &BS, &DA, &DB, &EO, &HC, &HZ, &IN, &MI, &NC, &NS, &OS, &UL,
+	&AM, &BS, &DA, &DB, &EO, &HC, &ex_HZ, &IN, &MI, &NC, &NS, &OS, &UL,
 	&XB, &XN, &XT, &XX
 };
 char **fkeys[10] = {
@@ -77,6 +77,7 @@ setterm(type)
 		unknown++;
 		CP(ltcbuf, "xx|dumb:");
 	}
+	gettmode();
 	setsize();
 	aoftspace = tspace;
 	zap();

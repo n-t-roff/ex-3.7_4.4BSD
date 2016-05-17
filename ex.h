@@ -50,10 +50,10 @@
  * of additional terminal descriptions you add to the termcap data base.
  */
 
+#define	MAXBSIZE	1024	/* Maximum block size */
 #ifndef	vms
 #include <sys/param.h>
 #else
-#define	MAXBSIZE	1024	/* Maximum block size */
 #include <types.h>
 #endif
 #include <ctype.h>
@@ -195,7 +195,7 @@ var	int	chng;		/* Warn "No write" */
 var	char	*Command;
 var	short	defwind;	/* -w# change default window size */
 var	int	dirtcnt;	/* When >= MAXDIRT, should sync temporary */
-#ifdef TIOCLGET
+#ifdef SIGTSTP
 var	bool	dosusp;		/* Do SIGTSTP in visual when ^Z typed */
 #endif
 var	bool	edited;		/* Current file is [Edited] */

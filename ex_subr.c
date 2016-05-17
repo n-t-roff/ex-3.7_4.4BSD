@@ -780,6 +780,7 @@ markit(addr)
  * better than core dumping and losing your work, leaving your tty
  * in a weird state, etc.
  */
+#ifdef SIGEMT
 int _ovno;
 void
 onemt()
@@ -790,6 +791,7 @@ onemt()
 		_ovno = 0;
 	error("emt trap, _ovno is %d @ - try again");
 }
+#endif
 
 /*
  * When a hangup occurs our actions are similar to a preserve

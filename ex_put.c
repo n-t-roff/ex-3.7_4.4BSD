@@ -103,7 +103,7 @@ normchar(c)
 	register char *colp;
 
 	c &= (TRIM|QUOTE);
-	if (c == '~' && HZ) {
+	if (c == '~' && ex_HZ) {
 		normchar('\\');
 		c = '^';
 	}

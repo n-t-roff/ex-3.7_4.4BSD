@@ -26,6 +26,7 @@ static char sccsid[] = "@(#)ex_cmdsub.c	8.1 (Berkeley) 6/9/93";
 bool	endline = 1;
 line	*tad1;
 static	jnoop();
+static void splitit(void);
 
 /*
  * Append after line a lines returned by function f.
@@ -542,13 +543,7 @@ badtag:
 		if (io<0)
 			continue;
 		tfcount++;
-		if (fstat(io, &sbuf) < 0)
-			bsize = LBSIZE;
-		else {
-			bsize = sbuf.st_blksize;
-			if (bsize <= 0)
-				bsize = LBSIZE;
-		}
+		bsize = LBSIZE;
 		while (getfile() == 0) {
 #endif
 			/* loop for each tags file entry */
@@ -776,7 +771,6 @@ zop2(lines, op)
 	register int op;
 {
 	register line *split;
-	static void splitit();
 
 	split = NULL;
 	switch (op) {
@@ -853,7 +847,7 @@ zop2(lines, op)
 }
 
 static void
-splitit()
+splitit(void)
 {
 	register int l;
 
