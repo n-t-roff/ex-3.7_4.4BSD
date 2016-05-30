@@ -42,6 +42,8 @@ int	cntln;
 long	cntnull;		/* Count of nulls " */
 long	cntodd;			/* Count of non-ascii characters " */
 
+static void checkmodeline(char *);
+
 #ifdef	FLOCKFILE
 /*
  * The alternate, saved and current file are locked the extent of the
@@ -58,8 +60,8 @@ int	lock_savedfile, lock_altfile, lock_curr ;
  * If comm is E then command is doomed and we are
  * parsing just so user won't have to retype the name.
  */
-filename(comm)
-	int comm;
+void
+filename(int comm)
 {
 	register int c = comm, d;
 	register int i;
@@ -248,8 +250,8 @@ filexp:
  * Glob the argument words in genbuf, or if no globbing
  * is implied, just split them up directly.
  */
-glob(gp)
-	struct glob *gp;
+void
+glob(struct glob *gp)
 {
 	int pvec[2];
 	register char **argv = gp->argv;
@@ -372,8 +374,8 @@ getone()
  * Read a file from the world.
  * C is command, 'e' if this really an edit (or a recover).
  */
-rop(c)
-	int c;
+void
+rop(int c)
 {
 	register int i;
 	struct stat stbuf;
@@ -875,8 +877,8 @@ getfile()
  * Write a range onto the io stream.
  */
 /* ARGSUSED */
-putfile(isfilter)
-int isfilter;
+void
+putfile(int isfilter)
 {
 	line *a1;
 	register char *fp, *lp;
@@ -945,9 +947,8 @@ wrerror()
 short slevel;
 short ttyindes;
 
-source(fil, okfail)
-	char *fil;
-	bool okfail;
+void
+source(char *fil, bool okfail)
 {
 	jmp_buf osetexit;
 	register int saveinp, ointty, oerrno;
@@ -1059,8 +1060,8 @@ iostats()
 # define rindex strrchr
 #endif
 
-checkmodeline(l)
-char *l;
+static void
+checkmodeline(char *l)
 {
 	char *beg, *end;
 	char cmdbuf[1024];

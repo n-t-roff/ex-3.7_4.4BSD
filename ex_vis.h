@@ -266,12 +266,11 @@ var	char	workcmd[5];	/* Temporary for lastcmd */
  * Function types
  */
 int	beep();
-int	qcount();
-int	vchange();
-int	vdelete();
+void	vchange(int);
+void	vdelete(int);
 int	vgrabit();
-int	vinschar();
-int	vmove();
-int	vputchar();
+void	vinschar(int);
+void	vmove(void);
+void	vputchar(int);
 int	vshift();
-int	vyankit();
+void	vyankit(void);

@@ -30,13 +30,17 @@ static char sccsid[] = "@(#)ex_temp.c	8.1 (Berkeley) 6/9/93";
 #define	EPOSITION	13
 #endif
 
+static void blkio(short, char *, int (*)());
+static void rbflush(void);
+
 char	tfname[40];
 char	rfname[40];
 int	havetmp;
 short	tfile = -1;
 short	rfile = -1;
 
-fileinit()
+void
+fileinit(void)
 {
 	register char *p;
 	register int i, j;
@@ -278,10 +282,8 @@ char	incorb[INCORB+1][BUFSIZ];
 int	stilinc;	/* up to here not written yet */
 #endif
 
-blkio(b, buf, iofcn)
-	short b;
-	char *buf;
-	int (*iofcn)();
+static void
+blkio(short b, char *buf, int (*iofcn)())
 {
 
 #ifdef VMUNIX
@@ -327,7 +329,8 @@ tflush()
  * Synchronize the state of the temporary file in case
  * a crash occurs.
  */
-synctmp()
+void
+synctmp(void)
 {
 	register int cnt;
 	register line *a;
@@ -685,7 +688,8 @@ YANKline()
 		*rbufcp = 0;
 }
 
-rbflush()
+static void
+rbflush(void)
 {
 	register struct strreg *sp = strp;
 

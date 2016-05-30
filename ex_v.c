@@ -181,7 +181,8 @@ ovend(f)
 /*
  * Enter visual mode
  */
-vop()
+void
+vop(void)
 {
 	register int c;
 #ifndef u370
@@ -282,7 +283,8 @@ fixzero()
  * at some point, and then quit from the visual and undo
  * you get the old file back.  Somewhat weird.
  */
-savevis()
+void
+savevis(void)
 {
 
 	if (inglobal)
@@ -417,8 +419,8 @@ vintr()
  * Set the size of the screen to size lines, to take effect the
  * next time the screen is redrawn.
  */
-vsetsiz(size)
-	int size;
+void
+vsetsiz(int size)
 {
 	register int b;
 

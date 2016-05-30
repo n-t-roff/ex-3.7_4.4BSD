@@ -15,6 +15,9 @@ static char sccsid[] = "@(#)ex_vadj.c	8.1 (Berkeley) 6/9/93";
 #include "ex_tty.h"
 #include "ex_vis.h"
 
+static void vscroll(int);
+static void vdellin(int, int, int);
+
 /*
  * Routines to deal with management of logical versus physical
  * display, opening and redisplaying lines on the screen, and
@@ -405,9 +408,8 @@ vup1()
  * If doclr is true, do a clear eol if the terminal
  * has standout (to prevent it from scrolling up)
  */
-vmoveitup(cnt, doclr)
-	register int cnt;
-	bool doclr;
+void
+vmoveitup(int cnt, bool doclr)
 {
 
 	if (cnt == 0)
@@ -438,8 +440,8 @@ vmoveitup(cnt, doclr)
 /*
  * Scroll the screen up cnt lines logically.
  */
-vscroll(cnt)
-	register int cnt;
+static void
+vscroll(int cnt)
 {
 	register int from, to;
 	char *tlines[TUBELINES];
@@ -466,7 +468,8 @@ vscroll(cnt)
 /*
  * Discard logical lines due to physical wandering off the screen.
  */
-vscrap()
+void
+vscrap(void)
 {
 	register int i, j;
 
@@ -516,8 +519,8 @@ vscrap()
  * Repaint the screen, with cursor at curs, aftern an arbitrary change.
  * Handle notification on large changes.
  */
-vrepaint(curs)
-	char *curs;
+void
+vrepaint(char *curs)
 {
 
 	wdot = NOLINE;
@@ -606,8 +609,8 @@ vrepaint(curs)
  * line after last won't completely fit.  The routine vsync is
  * more conservative and much less work on dumb terminals.
  */
-vredraw(p)
-	register int p;
+void
+vredraw(int p)
 {
 	register int l;
 	register line *tp;
@@ -727,8 +730,8 @@ vredraw(p)
  * Do the real work in deleting cnt lines starting at line p from
  * the display.  First affected line is line l.
  */
-vdellin(p, cnt, l)
-	int p, cnt, l;
+static void
+vdellin(int p, int cnt, int l)
 {
 	register int i;
 
@@ -822,8 +825,8 @@ vsync(p)
  * The guts of a sync.  Similar to redraw but
  * just less ambitous.
  */
-vsync1(p)
-	register int p;
+void
+vsync1(int p)
 {
 	register int l;
 	char temp[LBSIZE];
@@ -920,8 +923,8 @@ vcloseup(l, cnt)
  *
  * Many boundary conditions here.
  */
-vreplace(l, cnt, newcnt)
-	int l, cnt, newcnt;
+void
+vreplace(int l, int cnt, int newcnt)
 {
 	register int from, to, i;
 	bool savenote = 0;
@@ -1059,7 +1062,8 @@ skip:
  * If we are in a scroll ^D within hardcopy open then all this
  * is suppressed.
  */
-sethard()
+void
+sethard(void)
 {
 
 	if (state == VISUAL)
@@ -1079,8 +1083,8 @@ sethard()
  * as dirty so that they will be checked for correct
  * display at next sync/redraw.
  */
-vdirty(base, i)
-	register int base, i;
+void
+vdirty(int base, int i)
 {
 	register int l;
 	

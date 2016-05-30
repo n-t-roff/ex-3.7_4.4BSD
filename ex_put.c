@@ -22,6 +22,9 @@ static char sccsid[] = "@(#)ex_put.c	8.1 (Berkeley) 6/9/93";
  * line numbering and the like).
  */
 
+static void slobber(int);
+static void normchar(int);
+
 /*
  * The routines outchar, putchar and pline are actually
  * variables, and these variables point at the current definitions
@@ -97,8 +100,8 @@ listchar(c)
  * Format c for printing.  Handle funnies of upper case terminals
  * and crocky hazeltines which don't have ~.
  */
-normchar(c)
-	register short c;
+static void
+normchar(int c)
 {
 	register char *colp;
 
@@ -173,8 +176,8 @@ normline()
  * the printing of the line will erase or otherwise obliterate
  * the prompt which was printed before.  If it won't, do it now.
  */
-slobber(c)
-	int c;
+static void
+slobber(int c)
 {
 
 	shudclob = 0;
@@ -789,6 +792,7 @@ putnl()
 	ex_putchar('\n');
 }
 
+#if 0
 ex_putS(cp)
 	char *cp;
 {
@@ -798,7 +802,7 @@ ex_putS(cp)
 	while (*cp)
 		putch(*cp++);
 }
-
+#endif
 
 putch(c)
 	int c;
@@ -864,7 +868,8 @@ putNFL()
 /*
  * Try to start -nl mode.
  */
-pstart()
+void
+pstart(void)
 {
 
 	if (NONL)
@@ -890,7 +895,8 @@ pstart()
 /*
  * Stop -nl mode.
  */
-pstop()
+void
+pstop(void)
 {
 
 	if (inopen)

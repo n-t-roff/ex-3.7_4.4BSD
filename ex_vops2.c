@@ -62,8 +62,8 @@ vdcMID()
  * in the VBSIZE buffer BUF.  Used to save
  * deleted text of part of line.
  */
-takeout(BUF)
-	char *BUF;
+void
+takeout(char *BUF)
 {
 	register char *cp;
 
@@ -114,9 +114,8 @@ bool	vaifirst;
 bool	gobbled;
 char	*ogcursor;
 
-vappend(ch, cnt, indent)
-	int ch;		/* mjm: char --> int */
-	int cnt, indent;
+void
+vappend(int ch, int cnt, int indent)
 {
 	register int i;
 	register char *gcursor;

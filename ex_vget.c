@@ -15,6 +15,8 @@ static char sccsid[] = "@(#)ex_vget.c	8.1 (Berkeley) 6/9/93";
 #include "ex_tty.h"
 #include "ex_vis.h"
 
+static void addto(char *, char *);
+
 /*
  * Input routines for open/visual.
  * We handle upper case only terminals in visual and reading from the
@@ -298,7 +300,8 @@ blewit:
  * the purposes of repeat, so copy it from
  * the working to the previous command buffer.
  */
-setLAST()
+void
+setLAST(void)
 {
 
 	if (vglobp || vmacp)
@@ -315,8 +318,8 @@ setLAST()
  * If the insertion buffer oveflows, then destroy
  * the repeatability of the insert.
  */
-addtext(cp)
-	char *cp;
+void
+addtext(char *cp)
 {
 
 	if (vglobp)
@@ -348,8 +351,8 @@ ex_setBUF(BUF)
 	*wp = c;
 }
 
-addto(buf, str)
-	register char *buf, *str;
+static void
+addto(char *buf, char *str)
 {
 
 	if ((buf[0] & (QUOTE|TRIM)) == OVERBUF)
@@ -533,9 +536,8 @@ map(c,maps)
  * is false for, for example, pushing back lookahead from fastpeekkey(),
  * since otherwise two fast escapes can clobber our undo.
  */
-macpush(st, canundo)
-char *st;
-int canundo;
+void
+macpush(char *st, int canundo)
 {
 	char tmpbuf[BUFSIZ];
 

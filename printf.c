@@ -41,6 +41,7 @@ char *_p_dconv();
 
 /* VARARGS */
 #if __STDC__
+void
 ex_printf(const char *fmt0, ...)
 #else
 ex_printf(fmt0, va_alist)

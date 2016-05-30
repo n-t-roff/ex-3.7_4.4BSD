@@ -30,8 +30,8 @@ char	vscandir[2] =	{ '/', 0 };
  * and if wcursor is zero, then the first non-blank location of the
  * other line is implied.
  */
-operate(c, cnt)
-	register int c, cnt;
+void
+operate(int c, int cnt)
 {
 	register int i;
 	int (*moveop)(), (*deleteop)();
@@ -793,8 +793,8 @@ word(op, cnt)
  * To end of word, with operator op and cnt more motions
  * remaining after this.
  */
-eend(op)
-	register int (*op)();
+void
+eend(int (*op)())
 {
 	register int which;
 
