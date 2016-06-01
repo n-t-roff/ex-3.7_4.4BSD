@@ -100,7 +100,7 @@ main(argc, argv)
 		exit(0);
 	}
 	if (argc != 3)
-		error(" Wrong number of arguments to exrecover", 0);
+		error(" Wrong number of arguments to exrecover");
 
 	CP(file, argv[2]);
 
@@ -125,7 +125,7 @@ main(argc, argv)
 		/*
 		 * Good grief.
 		 */
-		error(" Not enough core for lines", 0);
+		error(" Not enough core for lines");
 #ifdef DEBUG
 	fpr("%d lines\n", H.Flines);
 #endif
@@ -421,7 +421,7 @@ findtmp(char *dir)
 	/*
 	 * Extreme lossage...
 	 */
-	error(" File not found", 0);
+	error(" File not found");
 }
 
 /*

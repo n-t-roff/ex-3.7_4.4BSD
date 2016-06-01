@@ -50,7 +50,7 @@ char	ttytype[ONMSZ] =
 	{ 'd', 'u', 'm', 'b' };
 
 short	COLUMNS = 80;
-short	LINES = 24;
+short	EX_LINES = 24;
 
 struct	option options[NOPTS + 1] = {
 	"autoindent",	"ai",	ONOFF,		0,	0,	0,

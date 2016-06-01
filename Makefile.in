@@ -18,10 +18,8 @@ LIBEXECDIR=${PREFIX}/libexec
 PROG=	ex
 SUBDIR=	ex3.7recover ex3.7preserve
 _CFLAGS=-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls \
-	-Wall -Wextra \
-	-fsanitize=address \
-	-fsanitize=undefined \
-	-fsanitize=integer
+	-Wall -Wextra
+#	-fsanitize=address -fsanitize=undefined -fsanitize=integer
 _CPPFLAGS=-DTABS=8 -DLISPCODE -DCHDIR -DUCVISUAL -DVMUNIX -DFASTTAG -DUSG3TTY \
 	-DLIBEXECDIR='"${LIBEXECDIR}"'
 SRCS=	ex.c ex_addr.c ex_cmds.c ex_cmds2.c ex_cmdsub.c ex_data.c ex_extern.c \

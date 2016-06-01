@@ -28,9 +28,9 @@ gettmode(void)
 #ifndef USG3TTY
 	if (ioctl(1, TIOCGETP, &tty) < 0)
 		return;
-	if (ospeed != tty.sg_ospeed)
+	if (ex_ospeed != tty.sg_ospeed)
 		value(SLOWOPEN) = tty.sg_ospeed < B1200;
-	ospeed = tty.sg_ospeed;
+	ex_ospeed = tty.sg_ospeed;
 	normf = tty.sg_flags;
 	UPPERCASE = (tty.sg_flags & LCASE) != 0;
 	GT = (tty.sg_flags & XTABS) != XTABS && !XT;
@@ -38,12 +38,13 @@ gettmode(void)
 #else
 	if (tcgetattr(1, &tty) < 0)
 		return;
-	if (ospeed != (tty.c_cflag & CBAUD))	/* mjm */
-		value(SLOWOPEN) = (tty.c_cflag & CBAUD) < B1200;
-	ospeed = tty.c_cflag & CBAUD;
+	ex_ospeed = cfgetospeed(&tty);
+	value(SLOWOPEN) = ex_ospeed < B1200;
 	normf = tty;
 	UPPERCASE = (tty.c_iflag & IUCLC) != 0;
+#ifdef TAB3
 	GT = (tty.c_oflag & TABDLY) != TAB3 && !XT;
+#endif
 	NONL = (tty.c_oflag & ONLCR) == 0;
 #endif
 }
@@ -146,7 +147,7 @@ setterm(type)
 	gettmode();
 	value(REDRAW) = AL && DL;
 	value(OPTIMIZE) = !CA && !GT;
-	if (ospeed == B1200 && !value(REDRAW))
+	if (ex_ospeed == B1200 && !value(REDRAW))
 		value(SLOWOPEN) = 1;	/* see also gettmode above */
 	if (unknown)
 		serror("%s: Unknown terminal type", type);
@@ -160,35 +161,35 @@ setsize()
 
 	if (ioctl(0, TIOCGWINSZ, (char *) &win) < 0) {
 #endif
-		i = LINES = tgetnum("li");
+		i = EX_LINES = tgetnum("li");
 		COLUMNS = tgetnum("co");
 #ifdef	TIOCGWINSZ
 	} else {
-		if ((LINES = winsz.ws_row = win.ws_row) == 0)
-			LINES = tgetnum("li");
-		i = LINES;
+		if ((EX_LINES = winsz.ws_row = win.ws_row) == 0)
+			EX_LINES = tgetnum("li");
+		i = EX_LINES;
 		if ((COLUMNS = winsz.ws_col = win.ws_col) == 0)
 			COLUMNS = tgetnum("co");
 	}
 #endif
-	if (LINES <= 5)
-		LINES = 24;
-	if (LINES > TUBELINES)
-		LINES = TUBELINES;
-	l = LINES;
-	if (ospeed < B1200)
+	if (EX_LINES <= 5)
+		EX_LINES = 24;
+	if (EX_LINES > TUBELINES)
+		EX_LINES = TUBELINES;
+	l = EX_LINES;
+	if (ex_ospeed < B1200)
 		l = 9;	/* including the message line at the bottom */
-	else if (ospeed < B2400)
+	else if (ex_ospeed < B2400)
 		l = 17;
-	if (l > LINES)
-		l = LINES;
+	if (l > EX_LINES)
+		l = EX_LINES;
 	if (COLUMNS <= 4)
 		COLUMNS = 1000;
 	options[WINDOW].ovalue = options[WINDOW].odefault = l - 1;
 	if (defwind) options[WINDOW].ovalue = defwind;
 	options[SCROLL].ovalue = options[SCROLL].odefault = HC ? 11 : ((l-1) / 2);
 	if (i <= 0)
-		LINES = 2;
+		EX_LINES = 2;
 }
 
 zap()
@@ -260,7 +261,7 @@ char *str;
 	if (str == NULL || *str=='O')	/* OOPS */
 		return 10000;	/* infinity */
 	costnum = 0;
-	tputs(str, LINES, countnum);
+	tputs(str, EX_LINES, countnum);
 	return costnum;
 }
 

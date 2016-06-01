@@ -433,7 +433,7 @@ vcookit(cnt)
 	register int cnt;
 {
 
-	return (cnt > 1 && (ospeed < B1200 && !initev || cnt > LINES * 2));
+	return (cnt > 1 && (ex_ospeed < B1200 && !initev || cnt > EX_LINES * 2));
 }
 
 /*

@@ -116,7 +116,7 @@ var	bool	XX;		/* Tektronix 4025 insert line */
  */
 var	bool	NONL;		/* Terminal can't hack linefeeds doing a CR */
 var	bool	UPPERCASE;	/* Ick! */
-extern	short	LINES;		/* Number of lines on screen */
+extern	short	EX_LINES;		/* Number of lines on screen */
 extern	short	COLUMNS;
 var	short	OCOLUMNS;	/* Save COLUMNS for a hack in open mode */
 #ifdef	TIOCGWINSZ

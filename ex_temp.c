@@ -274,7 +274,7 @@ getblock(atl, iof)
 #define	INCORB	64
 #endif
 char	incorb[INCORB+1][BUFSIZ];
-#define	pagrnd(a)	((char *)(((int)a)&~(BUFSIZ-1)))
+#define	pagrnd(a)	((char *)(((intptr_t)a)&~(BUFSIZ-1)))
 int	stilinc;	/* up to here not written yet */
 #endif
 
@@ -549,7 +549,7 @@ putreg(c)
 			vgoto(WECHO, 0);
 		}
 		vreg = -1;
-		error("Nothing in register %c", c);
+		ierror("Nothing in register %c", c);
 	}
 	if (inopen && partreg(c)) {
 		if (!FIXUNDO) {
@@ -712,7 +712,7 @@ int buflen;
 	rnext = mapreg(c)->rg_first;
 	if (rnext==0) {
 		*buf = 0;
-		error("Nothing in register %c",c);
+		ierror("Nothing in register %c",c);
 	}
 	p = buf;
 	while (getREG()==0) {

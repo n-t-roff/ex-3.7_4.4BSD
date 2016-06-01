@@ -448,7 +448,7 @@ casek:
 			pflag = 0;
 print:
 			nonzero();
-			if (CL && span() > LINES) {
+			if (CL && span() > EX_LINES) {
 				flush1();
 				vclear();
 			}
@@ -887,6 +887,6 @@ numberit:
 			ungetchar(c);
 			tailprim("", 0, 0);
 		}
-		error("What?|Unknown command character '%c'", c);
+		ierror("What?|Unknown command character '%c'", c);
 	}
 }

@@ -333,28 +333,22 @@ recover()
  */
 waitfor()
 {
-	union wait stat, pstat;
-	int wpid;
+	pid_t wpid;
 
-	pstat.w_status = 0;
 	do {
-		wpid = wait((int *)&stat);
+		wpid = wait(&status);
 		if (wpid == pid) {
-			pstat = stat;
 			rpid = wpid;
 		}
 	} while (wpid != -1);
 
-	if (WIFEXITED(pstat))
-		status = pstat.w_retcode;
-	else {
+	if (!WIFEXITED(status)) {
 		ex_printf("%d: terminated abnormally: %s ",
-		    pid, sys_siglist[pstat.w_termsig]);
-		if (pstat.w_coredump)
+		    pid, sys_siglist[WTERMSIG(status)]);
+		if (WCOREDUMP(status))
 			ex_printf("(core dumped) ");
 		if (!inopen)
 			ex_printf("\r\n");
-		status = pstat.w_termsig;
 	}
 }
 

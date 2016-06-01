@@ -37,6 +37,9 @@
 
 #define	_PATH_EXRECOVER		LIBEXECDIR "/ex3.7recover"
 #define	_PATH_EXPRESERVE	LIBEXECDIR "/ex3.7preserve"
+#ifndef _PATH_PRESERVE
+# define _PATH_PRESERVE		"/var/preserve"
+#endif
 #ifndef VMUNIX
 #ifndef	vms
 #define	EXSTRINGS	"/usr/libexec/ex3.7strings"

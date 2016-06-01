@@ -367,22 +367,22 @@ fgoto()
 			}
 			outcol = 0;
 		}
-		if (outline > LINES - 1) {
-			destline -= outline - (LINES - 1);
-			outline = LINES - 1;
+		if (outline > EX_LINES - 1) {
+			destline -= outline - (EX_LINES - 1);
+			outline = EX_LINES - 1;
 		}
 	}
-	if (destline > LINES - 1) {
+	if (destline > EX_LINES - 1) {
 		l = destline;
-		destline = LINES - 1;
-		if (outline < LINES - 1) {
+		destline = EX_LINES - 1;
+		if (outline < EX_LINES - 1) {
 			c = destcol;
 			if (pfast == 0 && (!CA || holdcm))
 				destcol = 0;
 			fgoto();
 			destcol = c;
 		}
-		while (l > LINES - 1) {
+		while (l > EX_LINES - 1) {
 			/*
 			 * The following linefeed (or simulation thereof)
 			 * is supposed to scroll up the screen, since we
@@ -512,11 +512,11 @@ plod(cnt)
 			 * Quickly consider homing down and moving from there.
 			 * Assume cost of LL is 2.
 			 */
-			k = (LINES - 1) - destline;
+			k = (EX_LINES - 1) - destline;
 			if (i + k + 2 < j && (k<=0 || UP)) {
 				tputs(LL, 0, plodput);
 				outcol = 0;
-				outline = LINES - 1;
+				outline = EX_LINES - 1;
 			}
 		}
 	} else
@@ -730,8 +730,8 @@ noteinp()
 {
 
 	outline++;
-	if (outline > LINES - 1)
-		outline = LINES - 1;
+	if (outline > EX_LINES - 1)
+		outline = EX_LINES - 1;
 	destline = outline;
 	destcol = outcol = 0;
 }
@@ -751,7 +751,7 @@ termreset()
 	if (TI)	/* otherwise it flushes anyway, and 'set tty=dumb' vomits */
 		putpad(TI);	 /*adb change -- emit terminal initial sequence */
 	destcol = 0;
-	destline = LINES - 1;
+	destline = EX_LINES - 1;
 	if (CA) {
 		outcol = UKCOL;
 		outline = UKCOL;
@@ -886,7 +886,11 @@ pstart(void)
 	tty.sg_flags = normf & ~(ECHO|XTABS|CRMOD);
 #else
 	tty = normf;
-	tty.c_oflag &= ~(ONLCR|TAB3);
+	tty.c_oflag &= ~(ONLCR
+#ifdef TAB3
+	    |TAB3
+#endif
+	    );
 	tty.c_lflag &= ~ECHO;
 #endif
 	ex_sTTY(1);
@@ -936,7 +940,11 @@ ostart()
 	tty = normf;
 	tty.c_iflag &= ~ICRNL;
 	tty.c_lflag &= ~(ECHO|ICANON);
-	tty.c_oflag &= ~(TAB3|ONLCR);
+	tty.c_oflag &= ~(
+#ifdef TAB3
+	    TAB3|
+#endif
+	    ONLCR);
 	tty.c_cc[VMIN] = 1;
 	tty.c_cc[VTIME] = 1;
 	ttcharoff();

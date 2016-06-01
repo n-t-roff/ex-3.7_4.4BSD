@@ -277,11 +277,11 @@ vinslin(p, cnt, l)
 		else if (CS && *AL==0) {
 			/* vt100 change scrolling region to fake AL */
 			vputp(SC, 1);
-			vputp(tgoto(CS, LINES-1,p), 1);
+			vputp(tgoto(CS, EX_LINES-1,p), 1);
 			vputp(RC, 1);	/* CS homes stupid cursor */
 			for (i=cnt; i>0; i--)
 				vputp(SR, 1);	/* should do @'s */
-			vputp(tgoto(CS, LINES-1,0), 1);
+			vputp(tgoto(CS, EX_LINES-1,0), 1);
 			vputp(RC, 1);	/* Once again put it back */
 		}
 		else {
@@ -759,11 +759,11 @@ vdellin(int p, int cnt, int l)
 	else if (CS && *DL==0) {
 		/* vt100: fake DL by changing scrolling region */
 		vputp(SC, 1);	/* Save since CS homes stupid cursor */
-		vputp(tgoto(CS, LINES-1, p), 1);
-		vputp(tgoto(CM, 0, LINES-1), 1);/* Go to lower left corner */
+		vputp(tgoto(CS, EX_LINES-1, p), 1);
+		vputp(tgoto(CM, 0, EX_LINES-1), 1);/* Go to lower left corner */
 		for (i=0; i<cnt; i++)		/* .. and scroll cnt times */
 			putch('\n');		/* should check NL too */
-		vputp(tgoto(CS, LINES-1, 0), 1);/* restore scrolling region */
+		vputp(tgoto(CS, EX_LINES-1, 0), 1);/* restore scrolling region */
 		vputp(RC, 1);			/* put cursor back */
 	}
 	else {

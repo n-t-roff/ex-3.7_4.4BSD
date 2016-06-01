@@ -748,13 +748,13 @@ zop(hadpr)
 			lines *= 10;
 			lines += c - '0';
 		}
-		if (lines < LINES)
+		if (lines < EX_LINES)
 			znoclear++;
 		value(WINDOW) = lines;
 		if (op == '=')
 			lines += 2;
 	} else
-		lines = op == EOF ? value(SCROLL) : excl ? LINES - 1 : 2*value(SCROLL);
+		lines = op == EOF ? value(SCROLL) : excl ? EX_LINES - 1 : 2*value(SCROLL);
 	if (inopen || c != EOF) {
 		ungetchar(c);
 		ex_newline();

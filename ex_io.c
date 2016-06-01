@@ -429,7 +429,15 @@ rop(int c)
 		if (i != sizeof(head))
 			break;
 #ifndef vms
-		switch (N_MAGIC(head)) {
+		switch (
+#if defined N_MAGIC
+		    N_MAGIC(
+#elif defined N_GETMAGIC
+		    N_GETMAGIC(
+#else
+# error
+#endif
+		    head)) {
 
 		case 0405:	/* data overlay on exec */
 		case OMAGIC:	/* unshared */
@@ -601,7 +609,7 @@ other:
 			undkind = UNDNONE;
 		if (inopen) {
 			vcline = 0;
-			vreplace(0, LINES, lineDOL());
+			vreplace(0, EX_LINES, lineDOL());
 		}
 	}
 }

@@ -77,17 +77,8 @@ eol()
  * with i an integer argument to printf.
  */
 /*VARARGS2*/
-error(str, i)
-#ifndef EXSTRINGS
-	char *str;
-#else
-# ifdef lint
-	char *str;
-# else
-	int str;
-# endif
-#endif
-	int i;
+void
+ierror(char *str, int i)
 {
 
 	error0();
@@ -97,6 +88,11 @@ error(str, i)
 		writing = 0;
 	}
 	error1(str);
+}
+
+void
+error(char *s) {
+	ierror(s, 0);
 }
 
 /*
@@ -374,13 +370,8 @@ resetflav(void)
  * Print an error message with a %s type argument to printf.
  * Message text comes from error message file.
  */
-serror(str, cp)
-#ifdef lint
-	register char *str;
-#else
-	register int str;
-#endif
-	char *cp;
+void
+serror(char *str, char *cp)
 {
 
 	error0();

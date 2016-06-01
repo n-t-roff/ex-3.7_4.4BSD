@@ -105,7 +105,7 @@ bool show;	/* if true update the screen */
 		 */
 		if (show)
 			if (undkind == UNDMOVE)
-				vdirty(0, LINES);
+				vdirty(0, EX_LINES);
 			else
 				vreplace(undap1 - addr, undap2 - undap1,
 				    undkind == UNDPUT ? 0 : unddol - dol);
@@ -772,7 +772,7 @@ vfilter(void)
 		vgoto(WECHO, 0); flusho();
 		vremote(cnt, filter, 2);
 	ONERR
-		vdirty(0, LINES);
+		vdirty(0, EX_LINES);
 	ENDCATCH
 	if (dot == zero && dol > zero)
 		dot = one;

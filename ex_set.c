@@ -27,7 +27,6 @@ set(void)
 	register struct option *op;
 	register int c;
 	bool no;
-	extern short ospeed;
 
 	setnoaddr();
 	if (skipend()) {
@@ -57,7 +56,7 @@ set(void)
 		}
 		/* Implement w300, w1200, and w9600 specially */
 		if (eq(cp, "w300")) {
-			if (ospeed >= B1200) {
+			if (ex_ospeed >= B1200) {
 dontset:
 				ignore(ex_getchar());	/* = */
 				ignore(getnum());	/* value */
@@ -65,11 +64,11 @@ dontset:
 			}
 			cp = "window";
 		} else if (eq(cp, "w1200")) {
-			if (ospeed < B1200 || ospeed >= B2400)
+			if (ex_ospeed < B1200 || ex_ospeed >= B2400)
 				goto dontset;
 			cp = "window";
 		} else if (eq(cp, "w9600")) {
-			if (ospeed < B2400)
+			if (ex_ospeed < B2400)
 				goto dontset;
 			cp = "window";
 		}
@@ -109,8 +108,8 @@ printone:
 			if (value(HARDTABS) <= 0)
 				value(HARDTABS) = TABS;
 			if (op == &options[WINDOW]) {
-				if (value(WINDOW) >= LINES)
-					value(WINDOW) = LINES-1;
+				if (value(WINDOW) >= EX_LINES)
+					value(WINDOW) = EX_LINES-1;
 				vsetsiz(value(WINDOW));
 			}
 			break;
