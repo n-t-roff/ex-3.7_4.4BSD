@@ -1020,6 +1020,9 @@ ttcharoff()
 	if ((vdisable = fpathconf(STDIN_FILENO, _PC_VDISABLE)) == -1)
 		vdisable = '\377';
 	tty.c_cc[VQUIT] = vdisable;
+#ifdef VSUSP
+	tty.c_cc[VSUSP] = vdisable;
+#endif
 #ifdef VDSUSP
 	tty.c_cc[VDSUSP] = vdisable;
 #endif
