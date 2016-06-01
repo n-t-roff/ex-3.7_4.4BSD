@@ -15,7 +15,6 @@ static char sccsid[] = "@(#)ex_subr.c	8.1 (Berkeley) 6/9/93";
 #include "ex_re.h"
 #include "ex_tty.h"
 #include "ex_vis.h"
-#include "pathnames.h"
 
 static void qcount(int);
 static void save(line *, line *);

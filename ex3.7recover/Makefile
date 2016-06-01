@@ -1,12 +1,12 @@
 #	@(#)Makefile	8.1 (Berkeley) 6/9/93
 
 PROG=	ex3.7recover
-SRCS=	ex3.7recover.c ex_extern.c
-CFLAGS+=-I${.CURDIR}/.. -I${.CURDIR}/../obj -DVMUNIX
-.PATH:	${.CURDIR}/..
-BINOWN=	root
-BINDIR=	/usr/libexec
-BINMODE=4555
-NOMAN=	noman
-
-.include <bsd.prog.mk>
+SRCS=	ex3.7recover.c ../ex_extern.c
+OBJS=	${SRCS:.c=.o}
+_CPPFLAGS=-I.. -DVMUNIX -DUSG3TTY
+${PROG}: ${OBJS}
+	${CC} ${CFLAGS} ${_CFLAGS} ${LDFLAGS} -o $@ ${OBJS}
+clean:
+	rm -f ${OBJS} ${PROG}
+.c.o:
+	${CC} ${CFLAGS} ${_CFLAGS} ${_CPPFLAGS} -c $< -o $@

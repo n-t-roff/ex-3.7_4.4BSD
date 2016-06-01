@@ -66,6 +66,10 @@
 #else
 #include <stat.h>
 #endif
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <fcntl.h>
 
 #ifndef var
 #define var	extern
@@ -400,7 +404,6 @@ void	put(void);
 int	putreg();
 int	YANKreg();
 int	ex_delete();
-int	execl();
 int	filter();
 int	getfile();
 int	getsub();

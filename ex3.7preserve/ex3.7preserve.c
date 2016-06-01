@@ -93,6 +93,8 @@ struct 	header {
 	short	Blocks[LBLKS];		/* Blocks where line pointers stashed */
 } H;
 
+static void notify(int, char *, int, time_t);
+
 main(argc, argv)
 	int argc;
 	char **argv;
@@ -206,7 +208,13 @@ copyout(name)
 	if (lseek(ifd, 0l, SEEK_SET)) {
 		(void)fprintf(stderr,
 		    "ex3.7preserve: negative number of lines\n");
-format:		(void)fprintf(stderr, "ex3.7preserve: %s\n", strerror(EFTYPE));
+format:		(void)fprintf(stderr, "ex3.7preserve: %s\n",
+#ifdef EFTYPE
+		    strerror(EFTYPE)
+#else
+		    "Inappropriate file type or format"
+#endif
+		    );
 		return (1);
 	}
 
@@ -258,10 +266,8 @@ format:		(void)fprintf(stderr, "ex3.7preserve: %s\n", strerror(EFTYPE));
 }
 
 /* Notify user uid that his file fname has been saved. */
-notify(uid, fname, flag, time)
-	int uid;
-	char *fname;
-	time_t	time;
+static void
+notify(int uid, char *fname, int flag, time_t time)
 {
 	struct passwd *pp;
 	register FILE *mf;

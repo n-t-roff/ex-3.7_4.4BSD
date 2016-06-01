@@ -18,7 +18,6 @@ static char sccsid[] = "@(#)ex_io.c	8.1 (Berkeley) 6/9/93";
 #include "ex_vis.h"
 #include <sys/file.h>
 #include <a.out.h>
-#include "pathnames.h"
 
 /*
  * File input/output, source, preserve and recover

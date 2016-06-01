@@ -69,6 +69,9 @@ void	fpr();
  */
 #define	NENTRY	50
 
+static void listfiles(char *);
+static void findtmp(char *);
+static void searchdir(char *);
 char	*ctime();
 char	nb[BUFSIZ];
 int	vercnt;			/* Count number of versions of file found */
@@ -196,8 +199,7 @@ error(str, inf)
 {
 
 	fpr(str, inf);
-	(void)ioctl(2, TIOCGETP, &tty);
-	if ((tty.sg_flags & RAW) == 0)
+	if (!tcgetattr(2, &tty) && !(tty.c_oflag & OPOST))
 		fpr("\n");
 	exit(1);
 }
@@ -215,8 +217,8 @@ struct svfile {
 	time_t	sf_time;
 };
 
-listfiles(dirname)
-	char *dirname;
+static void
+listfiles(char *dirname)
 {
 	register DIR *dir;
 	struct direct *dirent;
@@ -380,8 +382,8 @@ int	bestfd;			/* Keep best file open so it dont vanish */
  * (i.e. usually /tmp) and in _PATH_PRESERVE.
  * Want to find the newest so we search on and on.
  */
-findtmp(dir)
-	char *dir;
+static void
+findtmp(char *dir)
 {
 
 	/*
@@ -433,8 +435,8 @@ findtmp(dir)
  * name of the file we want to unlink is relative, rather than absolute
  * we won't be able to find it again.
  */
-searchdir(dirname)
-	char *dirname;
+static void
+searchdir(char *dirname)
 {
 	struct direct *dirent;
 	register DIR *dir;
@@ -639,12 +641,14 @@ int	cntch, cntln, cntodd, cntnull;
 /*
  * Following routines stolen mercilessly from ex.
  */
-putfile()
+void
+putfile(int i)
 {
 	line *a1;
 	register char *fp, *lp;
 	register int nib;
 
+	(void)i;
 	a1 = addr1;
 	clrstats();
 	cntln = addr2 - a1 + 1;
@@ -653,7 +657,7 @@ putfile()
 	nib = BUFSIZ;
 	fp = genbuf;
 	do {
-		getline(*a1++);
+		ex_getline(*a1++);
 		lp = linebuf;
 		for (;;) {
 			if (--nib < 0) {
@@ -695,7 +699,7 @@ clrstats()
 #define	READ	0
 #define	WRITE	1
 
-getline(tl)
+ex_getline(tl)
 	line tl;
 {
 	register char *bp, *lp;
@@ -711,9 +715,6 @@ getline(tl)
 			nl = nleft;
 		}
 }
-
-int	read();
-int	write();
 
 char *
 getblock(atl, iof)

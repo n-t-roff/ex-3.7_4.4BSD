@@ -21,7 +21,6 @@ static char sccsid[] = "@(#)ex.c	8.1 (Berkeley) 6/9/93";
 #include "ex_argv.h"
 #include "ex_temp.h"
 #include "ex_tty.h"
-#include "pathnames.h"
 
 #ifdef TRACE
 #ifdef	vms

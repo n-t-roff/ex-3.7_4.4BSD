@@ -35,11 +35,8 @@
 
 #include <paths.h>
 
-#define	_PATH_MAKEKEY		"/usr/libexec/makekey"
-#define	_PATH_BINMAIL		"/usr/libexec/mail.local"
-#define	_PATH_EXRECOVER		"/usr/libexec/ex3.7recover"
-#define	_PATH_EXPRESERVE	"/usr/libexec/ex3.7preserve"
-#define	_PATH_PRESERVE		"/var/preserve"
+#define	_PATH_EXRECOVER		LIBEXECDIR "/ex3.7recover"
+#define	_PATH_EXPRESERVE	LIBEXECDIR "/ex3.7preserve"
 #ifndef VMUNIX
 #ifndef	vms
 #define	EXSTRINGS	"/usr/libexec/ex3.7strings"

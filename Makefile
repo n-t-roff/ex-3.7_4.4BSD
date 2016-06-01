@@ -13,15 +13,17 @@
 VERSION=3.7
 PREFIX=	${DESTDIR}/usr/local
 BINDIR=	${PREFIX}/bin
+MANDIR=	${PREFIX}/share/man
 LIBEXECDIR=${PREFIX}/libexec
-PRESERVEDIR=/var/preserve
 PROG=	ex
 SUBDIR=	ex3.7recover ex3.7preserve
 _CFLAGS=-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls \
+	-Wall -Wextra \
 	-fsanitize=address \
 	-fsanitize=undefined \
 	-fsanitize=integer
-_CPPFLAGS=-DTABS=8 -DLISPCODE -DCHDIR -DUCVISUAL -DVMUNIX -DFASTTAG -DUSG3TTY
+_CPPFLAGS=-DTABS=8 -DLISPCODE -DCHDIR -DUCVISUAL -DVMUNIX -DFASTTAG -DUSG3TTY \
+	-DLIBEXECDIR='"${LIBEXECDIR}"'
 SRCS=	ex.c ex_addr.c ex_cmds.c ex_cmds2.c ex_cmdsub.c ex_data.c ex_extern.c \
 	ex_get.c ex_io.c ex_put.c ex_re.c ex_set.c ex_subr.c ex_tagio.c \
 	ex_temp.c ex_tty.c ex_unix.c ex_v.c ex_vadj.c ex_vget.c ex_vmain.c \
@@ -35,21 +37,40 @@ LDADD=	-ltinfo
 # with.
 CLEANFILES=ex_vars.h
 
+all: ${PROG}
+	for i in ${SUBDIR}; do \
+		( cd $$i && ${MAKE} \
+		    _CFLAGS="${_CFLAGS}" \
+		    ) || exit 1; \
+	done
+
 ${PROG}: ${OBJS}
 	${CC} ${CFLAGS} ${_CFLAGS} ${LDFLAGS} -o $@ ${OBJS} ${LDADD}
 
-install: ${BINDIR} ${LIBEXECDIR} ${PRESERVEDIR}
+install: ${BINDIR} ${LIBEXECDIR} ${PRESERVEDIR} ${MANDIR}/man1
 	install ${PROG} ${BINDIR}/
 	for i in vi view edit; do \
 		ln -sf ${BINDIR}/${PROG} ${BINDIR}/$$i; \
+	done
+	for i in ex vi; do \
+		install -m 644 $$i.1 ${MANDIR}/man1/; \
+	done
+	ln -sf ${MANDIR}/man1/ex.1 ${MANDIR}/man1/edit.1
+	ln -sf ${MANDIR}/man1/vi.1 ${MANDIR}/man1/view.1
+	for i in ${SUBDIR}; do \
+		install $$i/$$i ${LIBEXECDIR}/; \
 	done
 
 uninstall:
 	for i in ${PROG} vi view edit; do \
 		rm -f ${BINDIR}/$$i; \
+		rm -f ${MANDIR}/man1/$$i.1; \
+	done
+	for i in ${SUBDIR}; do \
+		rm -f ${LIBEXECDIR}/$$i; \
 	done
 
-${BINDIR} ${LIBDIR}:
+${BINDIR} ${LIBDIR} ${MANDIR}/man1:
 	mkdir -p $@
 
 ${PRESERVEDIR}:
@@ -57,6 +78,9 @@ ${PRESERVEDIR}:
 	chmod 1777 $@
 
 clean:
+	for i in ${SUBDIR}; do \
+		( cd $$i && ${MAKE} $@ ) || exit 1; \
+	done
 	rm -f ${OBJS} ${PROG}
 
 ex_vars.h: ex_data.c
