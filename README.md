@@ -1,9 +1,10 @@
-# ex-3.7 4.4BSD
+# ex-3.7 (from 4.4BSD release)
 This is the final release of the original `vi` taken from 4.4BSD.
 It had been released in 1993 but the last functional changes had been made in 1985,
 hence `:ve` gives this date.
 ## Installation notes
-Some configuration (e.g. installation paths) can be done in the [`makefile`](https://github.com/n-t-roff/ex-3.7/blob/master/Makefile.in).
+Some configuration (e.g. installation paths) can be done in the
+[`makefile`](https://github.com/n-t-roff/ex-3.7_4.4BSD/blob/master/Makefile.in).
 For compiling it on BSD, Linux and Solaris autoconfiguration is required:
 ```sh
 $ ./configure
