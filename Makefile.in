@@ -17,11 +17,12 @@ MANDIR=	${PREFIX}/share/man
 LIBEXECDIR=${PREFIX}/libexec
 PROG=	ex
 SUBDIR=	ex3.7recover ex3.7preserve
-_CFLAGS=-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls \
-	-Wall -Wextra
+_CFLAGS=-Wall -Wextra
+#	-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls \
 #	-fsanitize=address -fsanitize=undefined -fsanitize=integer
 _CPPFLAGS=-DTABS=8 -DLISPCODE -DCHDIR -DUCVISUAL -DVMUNIX -DFASTTAG -DUSG3TTY \
 	-DLIBEXECDIR='"${LIBEXECDIR}"'
+_LDFLAGS=-s
 SRCS=	ex.c ex_addr.c ex_cmds.c ex_cmds2.c ex_cmdsub.c ex_data.c ex_extern.c \
 	ex_get.c ex_io.c ex_put.c ex_re.c ex_set.c ex_subr.c ex_tagio.c \
 	ex_temp.c ex_tty.c ex_unix.c ex_v.c ex_vadj.c ex_vget.c ex_vmain.c \
@@ -38,11 +39,12 @@ all: ${PROG}
 	for i in ${SUBDIR}; do \
 		( cd $$i && ${MAKE} \
 		    _CFLAGS="${_CFLAGS}" \
+		    _LDFLAGS="${_LDFLAGS}" \
 		    ) || exit 1; \
 	done
 
 ${PROG}: ${OBJS}
-	${CC} ${CFLAGS} ${_CFLAGS} ${LDFLAGS} -o $@ ${OBJS} ${LDADD}
+	${CC} ${CFLAGS} ${_CFLAGS} ${LDFLAGS} ${_LDFLAGS} -o $@ ${OBJS} ${LDADD}
 
 install: ${BINDIR} ${LIBEXECDIR} ${PRESERVEDIR} ${MANDIR}/man1
 	install ${PROG} ${BINDIR}/

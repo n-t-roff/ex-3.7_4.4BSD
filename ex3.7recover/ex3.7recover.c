@@ -193,15 +193,19 @@ main(argc, argv)
  * a newline which would screw up the screen.
  */
 /*VARARGS2*/
-error(str, inf)
-	char *str;
-	int inf;
+void
+ierror(char *str, int inf)
 {
 
 	fpr(str, inf);
 	if (!tcgetattr(2, &tty) && !(tty.c_oflag & OPOST))
 		fpr("\n");
 	exit(1);
+}
+
+void
+error(char *s) {
+	ierror(s, 0);
 }
 
 /*

@@ -41,7 +41,9 @@ gettmode(void)
 	ex_ospeed = cfgetospeed(&tty);
 	value(SLOWOPEN) = ex_ospeed < B1200;
 	normf = tty;
+#ifdef IUCLC
 	UPPERCASE = (tty.c_iflag & IUCLC) != 0;
+#endif
 #ifdef TAB3
 	GT = (tty.c_oflag & TABDLY) != TAB3 && !XT;
 #endif

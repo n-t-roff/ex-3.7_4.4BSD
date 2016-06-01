@@ -5,7 +5,7 @@ SRCS=	ex3.7recover.c ../ex_extern.c
 OBJS=	${SRCS:.c=.o}
 _CPPFLAGS=-I.. -DVMUNIX -DUSG3TTY
 ${PROG}: ${OBJS}
-	${CC} ${CFLAGS} ${_CFLAGS} ${LDFLAGS} -o $@ ${OBJS}
+	${CC} ${CFLAGS} ${_CFLAGS} ${LDFLAGS} ${_LDFLAGS} -o $@ ${OBJS}
 clean:
 	rm -f ${OBJS} ${PROG}
 .c.o:
