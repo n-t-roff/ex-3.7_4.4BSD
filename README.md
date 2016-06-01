@@ -1,4 +1,4 @@
-# ex-3.7 4.4BSD
+# ex-3.7 (from 4.4BSD release)
 This is the final release of the original `vi` taken from 4.4BSD.
 It had been released in 1993 but the last functional changes had been made in 1985,
 hence `:ve` gives this date.
