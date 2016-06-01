@@ -172,7 +172,7 @@ notinvis:
 			tail("append");
 			setdot();
 			aiflag = exclam();
-			newline();
+			ex_newline();
 			vmacchng(0);
 			deletenone();
 			setin(addr2);
@@ -314,7 +314,7 @@ doecmd:
 			setdot();
 			nonzero();
 			aiflag = exclam();
-			newline();
+			ex_newline();
 			vmacchng(0);
 			deletenone();
 			setin(addr2);
@@ -332,7 +332,7 @@ doecmd:
 			c = exclam();
 			setcount();
 			nonzero();
-			newline();
+			ex_newline();
 			vmacchng(0);
 			if (given < 2 && addr2 != dol)
 				addr2++;
@@ -346,7 +346,7 @@ casek:
 			c = ex_getchar();
 			if (endcmd(c))
 				serror("Mark what?|%s requires following letter", Command);
-			newline();
+			ex_newline();
 			if (!islower(c))
 				error("Bad mark|Mark must specify a letter");
 			setdot();
@@ -661,7 +661,7 @@ suspend:
 			setnoaddr();
 			markDOT();
 			c = exclam();
-			newline();
+			ex_newline();
 			undo(c);
 			continue;
 
@@ -757,7 +757,7 @@ wq:
 				c = tolower(c);
 			if (!islower(c))
 				error("Bad register");
-			newline();
+			ex_newline();
 			setdot();
 			cmdmac(c);
 			continue;
@@ -812,7 +812,7 @@ numberit:
 
 /* = */
 		case '=':
-			newline();
+			ex_newline();
 			setall();
 			if (inglobal == 2)
 				pofix();

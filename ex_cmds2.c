@@ -269,7 +269,7 @@ next()
  * saving for possible later post-command prints.
  */
 void
-newline(void)
+ex_newline(void)
 {
 	register int c;
 

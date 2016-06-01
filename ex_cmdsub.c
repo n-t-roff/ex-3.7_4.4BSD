@@ -272,7 +272,7 @@ move()
 	adt = address((char*)0);
 	if (adt == 0)
 		serror("%s where?|%s requires a trailing address", Command);
-	newline();
+	ex_newline();
 	move1(iscopy, adt);
 	killed();
 }
@@ -757,7 +757,7 @@ zop(hadpr)
 		lines = op == EOF ? value(SCROLL) : excl ? LINES - 1 : 2*value(SCROLL);
 	if (inopen || c != EOF) {
 		ungetchar(c);
-		newline();
+		ex_newline();
 	}
 	addr1 = addr2;
 	if (addr2 == 0 && dot < dol && op == 0)
@@ -1115,7 +1115,7 @@ mapcmd(int un, int ab)
 		} else if (endcmd(c) && c!='"') {
 			ungetchar(c);
 			if (un) {
-				newline();
+				ex_newline();
 				*p = 0;
 				addmac(lhs, NOSTR, NOSTR, mp);
 				return;
@@ -1139,7 +1139,7 @@ mapcmd(int un, int ab)
 		*p++ = c;
 	}
 	*p = 0;
-	newline();
+	ex_newline();
 	/*
 	 * Special hack for function keys: #1 means key f1, etc.
 	 * If the terminal doesn't have function keys, we just use #1.

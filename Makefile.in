@@ -30,7 +30,6 @@ SRCS=	ex.c ex_addr.c ex_cmds.c ex_cmds2.c ex_cmdsub.c ex_data.c ex_extern.c \
 	ex_voper.c ex_vops.c ex_vops2.c ex_vops3.c ex_vput.c ex_vwind.c \
 	printf.c
 OBJS=	${SRCS:.c=.o}
-LDADD=	-ltinfo
 
 # There's a boostrap problem here -- ex is necessary to build ex_vars.h.
 # The file ex_vars.h.init can be used to build a version of ex to start
@@ -82,6 +81,9 @@ clean:
 		( cd $$i && ${MAKE} $@ ) || exit 1; \
 	done
 	rm -f ${OBJS} ${PROG}
+
+distclean: clean
+	rm -f Makefile config.log
 
 ex_vars.h: ex_data.c
 	csh -f makeoptions ex_data.c ${CPP} ${_CPPFLAGS}
