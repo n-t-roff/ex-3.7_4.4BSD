@@ -31,6 +31,7 @@ $ make distclean
   `infocmp -l` from capabilities `kpp` and `knp`.
 * After resume from suspending the process the display may be empty or incomplete.
   Pressing any key fixes this.
+  (The problem does not occur if `:stop` or `:suspend` is used instead of `^Z`.)
 
 **Attention**:
 The original `vi` had not been 8-bit clean!
