@@ -72,7 +72,7 @@ vopen(tp, p)
 		 * and so its not worth optimizing.
 		 */
 		vdirty(vcline+1, WECHO);
-	getline(*tp);
+	ex_getline(*tp);
 
 	/*
 	 * If we are opening at the top of the window, can try a window
@@ -534,7 +534,7 @@ vrepaint(char *curs)
 	 * Deal with a totally useless display.
 	 */
 	if (vcnt == 0 || vcline < 0 || vcline > vcnt || holdupd && state != VISUAL) {
-		register line *odol = dol;
+		size_t odol = dol - fendcore;
 
 		vcnt = 0;
 		if (holdupd)
@@ -543,11 +543,11 @@ vrepaint(char *curs)
 			else
 				vup1();
 		holdupd = 0;
-		if (odol == zero)
+		if (fendcore + odol == zero)
 			fixzero();
 		vcontext(dot, '.');
 		ignore(noteit(1));
-		if (noteit(1) == 0 && odol == zero) {
+		if (noteit(1) == 0 && fendcore + odol == zero) {
 			CATCH
 				error("No lines in buffer");
 			ENDCATCH
@@ -613,7 +613,7 @@ void
 vredraw(int p)
 {
 	register int l;
-	register line *tp;
+	size_t tp;
 	char temp[LBSIZE];
 	bool anydl = 0;
 	short oldhold = hold;
@@ -639,7 +639,7 @@ vredraw(int p)
 	vscrap();
 	CP(temp, linebuf);
 	l = 0;
-	tp = dot - vcline;
+	tp = dot - fendcore - vcline;
 	if (vcnt == 0)
 		LINE(0) = WTOP;
 	while (l < vcnt && LINE(l) < p)
@@ -655,7 +655,7 @@ vredraw(int p)
 		if (l == vcline)
 			strcLIN(temp);
 		else
-			getline(*tp);
+			ex_getline(*(fendcore + tp));
 
 		/*
 		 * Delete junk between displayed lines.
@@ -683,7 +683,7 @@ vredraw(int p)
 				break;
 			}
 			FLAGS(l) &= ~VDIRT;
-			ignore(vreopen(p, lineno(tp), l));
+			ignore(vreopen(p, lineno(fendcore + tp), l));
 			p = LINE(l) + DEPTH(l);
 		} else
 			p += DEPTH(l);
@@ -698,11 +698,11 @@ vredraw(int p)
 		int ovcline = vcline;
 
 		vcline = l;
-		for (; tp <= dol && Peek_key != ATTN; tp++) {
-			getline(*tp);
+		for (; fendcore + tp <= dol && Peek_key != ATTN; tp++) {
+			ex_getline(*(fendcore + tp));
 			if (p + vdepth() - 1 > WBOT)
 				break;
-			vopen(tp, p);
+			vopen(fendcore + tp, p);
 			p += DEPTH(vcline);
 			vcline++;
 		}
@@ -715,7 +715,7 @@ vredraw(int p)
 	 * are past end of file, or an @ if the next line won't fit.
 	 */
 	for (; p <= WBOT && Peek_key != ATTN; p++)			
-		vclrlin(p, tp);
+		vclrlin(p, fendcore + tp);
 	strcLIN(temp);
 	hold = oldhold;
 	if (heldech)
@@ -811,8 +811,7 @@ vsyncCL()
 	vsync(LINE(vcline));
 }
 
-vsync(p)
-	register int p;
+vsync(int p)
 {
 
 	if (value(REDRAW))
@@ -866,7 +865,7 @@ vsync1(int p)
 				if (l == vcline)
 					strcLIN(temp);
 				else
-					getline(dot[l - vcline]);
+					ex_getline(dot[l - vcline]);
 				/*
 				 * Be careful that a long line doesn't cause the
 				 * screen to shoot up.

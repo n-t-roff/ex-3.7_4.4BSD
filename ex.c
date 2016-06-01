@@ -308,7 +308,8 @@ main(ac, av)
 			filioerr(_PATH_EXRECOVER);
 			ex_exit(1);
 		}
-		CP(savedfile, *av++), ac--;
+		CP(savedfile, *av);
+		av++, ac--;
 	}
 
 	/*

@@ -34,9 +34,7 @@ static void somechange(void);
  * Be careful about intermediate states to avoid scramble
  * if an interrupt comes in.
  */
-append(f, a)
-	int (*f)();
-	line *a;
+append(int (*f)(), line *a)
 {
 	register line *a1, *a2, *rdot;
 	int nline;
@@ -217,7 +215,7 @@ join(c)
 	cp = genbuf;
 	*cp = 0;
 	for (a1 = addr1; a1 <= addr2; a1++) {
-		getline(*a1);
+		ex_getline(*a1);
 		cp1 = linebuf;
 		if (a1 != addr1 && c == 0) {
 			while (*cp1 == ' ' || *cp1 == '\t')
@@ -279,55 +277,54 @@ move()
 	killed();
 }
 
-move1(cflag, addrt)
-	int cflag;
-	line *addrt;
+move1(int cflag, line *addrt)
 {
-	register line *adt, *ad1, *ad2;
+	size_t adt, ad1, ad2;
 	int lines;
+	size_t daddrt = addrt - fendcore;
 
-	adt = addrt;
+	adt = daddrt;
 	lines = (addr2 - addr1) + 1;
 	if (cflag) {
 		tad1 = addr1;
-		ad1 = dol;
-		ignore(append(getcopy, ad1++));
-		ad2 = dol;
+		ad1 = dol - fendcore;
+		ignore(append(getcopy, fendcore + ad1++));
+		ad2 = dol - fendcore;
 	} else {
-		ad2 = addr2;
-		for (ad1 = addr1; ad1 <= ad2;)
-			*ad1++ &= ~01;
-		ad1 = addr1;
+		ad2 = addr2 - fendcore;
+		for (ad1 = addr1 - fendcore; ad1 <= ad2;)
+			*(fendcore + ad1++) &= ~01;
+		ad1 = addr1 - fendcore;
 	}
 	ad2++;
 	if (adt < ad1) {
 		if (adt + 1 == ad1 && !cflag && !inglobal)
 			error("That move would do nothing!");
-		dot = adt + (ad2 - ad1);
+		dot = fendcore + adt + (ad2 - ad1);
 		if (++adt != ad1) {
-			reverse(adt, ad1);
-			reverse(ad1, ad2);
-			reverse(adt, ad2);
+			reverse(fendcore + adt, fendcore + ad1);
+			reverse(fendcore + ad1, fendcore + ad2);
+			reverse(fendcore + adt, fendcore + ad2);
 		}
 	} else if (adt >= ad2) {
-		dot = adt++;
-		reverse(ad1, ad2);
-		reverse(ad2, adt);
-		reverse(ad1, adt);
+		dot = fendcore + adt++;
+		reverse(fendcore + ad1, fendcore + ad2);
+		reverse(fendcore + ad2, fendcore + adt);
+		reverse(fendcore + ad1, fendcore + adt);
 	} else
 		error("Move to a moved line");
 	change();
 	if (!inglobal)
 		if(FIXUNDO) {
 			if (cflag) {
-				undap1 = addrt + 1;
+				undap1 = fendcore + daddrt + 1;
 				undap2 = undap1 + lines;
 				deletenone();
 			} else {
 				undkind = UNDMOVE;
 				undap1 = addr1;
 				undap2 = addr2;
-				unddel = addrt;
+				unddel = fendcore + daddrt;
 				squish();
 			}
 		}
@@ -338,7 +335,7 @@ getcopy()
 
 	if (tad1 > addr2)
 		return (EOF);
-	getline(*tad1++);
+	ex_getline(*tad1++);
 	return (0);
 }
 
@@ -350,7 +347,7 @@ getput()
 
 	if (tad1 > unddol)
 		return (EOF);
-	getline(*tad1++);
+	ex_getline(*tad1++);
 	tad1++;
 	return (0);
 }
@@ -395,12 +392,12 @@ pragged(kill)
 	if (!kill)
 		getDOT();
 	strcpy(genbuf, linebuf);
-	getline(*unddol);
+	ex_getline(*unddol);
 	if (kill)
 		*pkill[1] = 0;
 	strcat(linebuf, gp);
 	putmark(unddol);
-	getline(dol[1]);
+	ex_getline(dol[1]);
 	if (kill)
 		strcLIN(pkill[0]);
 	strcpy(gp, linebuf);
@@ -829,7 +826,7 @@ zop2(int lines, int op)
 	if (addr1 > addr2)
 		return;
 	if (op == EOF && zhadpr) {
-		getline(*addr1);
+		ex_getline(*addr1);
 		ex_putchar('\r' | QUOTE);
 		shudclob = 1;
 	} else if (znoclear == 0 && CL != NOSTR && !inopen) {
@@ -867,7 +864,7 @@ plines(adr1, adr2, movedot)
 
 	pofix();
 	for (addr = adr1; addr <= adr2; addr++) {
-		getline(*addr);
+		ex_getline(*addr);
 		pline(lineno(addr));
 		if (inopen)
 			ex_putchar('\n' | QUOTE);
@@ -1201,7 +1198,9 @@ addmac(char *src,char *dest,char *dname,struct maps *mp)
 	}
 	else if (dest) {
 		/* check for tail recursion in input mode: fussier */
-		if (eq(src, dest+strlen(dest)-strlen(src)))
+		size_t ld = strlen(dest);
+		size_t ls = strlen(src);
+		if (ld >= ls && eq(src, dest + ld - ls))
 			error("No tail recursion");
 	}
 	/*
@@ -1265,11 +1264,10 @@ addmac(char *src,char *dest,char *dname,struct maps *mp)
  * Implements macros from command mode. c is the buffer to
  * get the macro from.
  */
-cmdmac(c)
-char c;
+cmdmac(char c)
 {
 	char macbuf[BUFSIZ];
-	line *ad, *a1, *a2;
+	size_t ad, a1, a2;
 	char *oglobp;
 	short pk;
 	bool oinglobal;
@@ -1281,10 +1279,11 @@ char c;
 	if (inglobal < 2)
 		inglobal = 1;
 	regbuf(c, macbuf, sizeof(macbuf));
-	a1 = addr1; a2 = addr2;
+	a1 = addr1 - fendcore;
+	a2 = addr2 - fendcore;
 	for (ad=a1; ad<=a2; ad++) {
 		globp = macbuf;
-		dot = ad;
+		dot = fendcore + ad;
 		commands(1,1);
 	}
 	globp = oglobp;

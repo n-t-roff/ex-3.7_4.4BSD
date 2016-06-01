@@ -178,7 +178,7 @@ int	scount, slines, stotal;
 substitute(c)
 	int c;
 {
-	register line *addr;
+	size_t addr;
 	register int n;
 	int gsubf, hopcount;
 
@@ -187,9 +187,9 @@ substitute(c)
 		save12(), undkind = UNDCHANGE;
 	stotal = 0;
 	slines = 0;
-	for (addr = addr1; addr <= addr2; addr++) {
+	for (addr = addr1 - fendcore; addr <= addr2; addr++) {
 		scount = hopcount = 0;
-		if (dosubcon(0, addr) == 0)
+		if (dosubcon(0, fendcore + addr) == 0)
 			continue;
 		if (gsubf) {
 			/*
@@ -199,15 +199,15 @@ substitute(c)
 			while (*loc2) {
 				if (++hopcount > sizeof linebuf)
 					error("substitution loop");
-				if (dosubcon(1, addr) == 0)
+				if (dosubcon(1, fendcore + addr) == 0)
 					break;
 			}
 		}
 		if (scount) {
 			stotal += scount;
 			slines++;
-			putmark(addr);
-			n = append(getsub, addr);
+			putmark(fendcore + addr);
+			n = append(getsub, fendcore + addr);
 			addr += n;
 			addr2 += n;
 		}
@@ -782,7 +782,7 @@ execute(gf, addr)
 		if (addr == zero)
 			return (0);
 		p1 = linebuf;
-		getline(*addr);
+		ex_getline(*addr);
 		locs = 0;
 	}
 	p2 = expbuf;

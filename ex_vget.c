@@ -572,8 +572,8 @@ macpush(char *st, int canundo)
 }
 
 #ifdef TRACE
-visdump(s)
-char *s;
+void
+visdump(char *s)
 {
 	register int i;
 
@@ -589,8 +589,8 @@ char *s;
 	tvliny();
 }
 
-vudump(s)
-char *s;
+void
+vudump(char *s)
 {
 	register line *p;
 	char savelb[1024];
@@ -606,7 +606,7 @@ char *s;
 	fprintf(trace, "linebuf = '%s'\n", linebuf);
 	for (p=zero+1; p<=truedol; p++) {
 		fprintf(trace, "%o ", *p);
-		getline(*p);
+		ex_getline(*p);
 		fprintf(trace, "'%s'\n", linebuf);
 	}
 	fprintf(trace, "]\n");

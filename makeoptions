@@ -12,7 +12,7 @@
 
 # remake options -- this isn't necessary unless you add/delete options
 #
-set TMP1=/tmp/_vi_vars1
+set TMP1=/tmp/_vi_vars1.c
 set TMP2=/tmp/_vi_vars2
 onintr ifintr
 
@@ -23,7 +23,7 @@ ex - $TMP1 <<'%'
 	q
 '%'
 shift
-cpp $* $TMP1 > $TMP2
+$* $TMP1 > $TMP2
 ex - $TMP2 <<'X'
 	" delete all preprocessor output (# line, etc)
 	g/^# /d

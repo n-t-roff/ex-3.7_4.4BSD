@@ -175,7 +175,7 @@ genindent(indent)
 getDOT()
 {
 
-	getline(*dot);
+	ex_getline(*dot);
 }
 
 line *
@@ -400,14 +400,34 @@ morelines()
 	if ((int) sbrk(1024 * sizeof (line)) == -1)
 		return (-1);
 	endcore += 1024;
-	return (0);
 #else
-	/*
-	 * We can never be guaranteed that we can get more memory
-	 * beyond "endcore".  So we just punt every time.
-	 */
-	return -1;
+	ssize_t d;
+	line *prev = fendcore;
+	value(LINELIMIT) += 2048;
+	fendcore = realloc(fendcore, value(LINELIMIT) * sizeof(line *));
+	endcore = fendcore + value(LINELIMIT) - 1;
+	if ((d = fendcore - prev)) {
+		extern line *tad1;
+		extern line *llimit;
+		addr1   += d;
+		addr2   += d;
+		dol     += d;
+		dot     += d;
+		one     += d;
+		truedol += d;
+		unddol  += d;
+		zero    += d;
+		unddel  += d;
+		undap1  += d;
+		undap2  += d;
+		undadot += d;
+		tad1    += d;
+		llimit  += d;
+		if (wdot)    wdot    += d;
+		if (vUNDdot) vUNDdot += d;
+	}
 #endif
+	return (0);
 }
 
 nonzero()
@@ -545,6 +565,8 @@ static void
 save(line *a1, line *a2)
 {
 	register int more;
+	size_t d1 = a1 - fendcore;
+	size_t d2 = a2 - fendcore;
 
 	if (!FIXUNDO)
 		return;
@@ -554,7 +576,7 @@ save(line *a1, line *a2)
 #endif
 	undkind = UNDNONE;
 	undadot = dot;
-	more = (a2 - a1 + 1) - (unddol - dol);
+	more = (d2 - d1 + 1) - (unddol - dol);
 	while (more > (endcore - truedol))
 		if (morelines() < 0)
 #ifdef UNIX_SBRK
@@ -567,11 +589,11 @@ save(line *a1, line *a2)
 		    (truedol - unddol));
 	unddol += more;
 	truedol += more;
-	copyw(dol + 1, a1, a2 - a1 + 1);
+	copyw(dol + 1, fendcore + d1, d2 - d1 + 1);
 	undkind = UNDALL;
-	unddel = a1 - 1;
-	undap1 = a1;
-	undap2 = a2 + 1;
+	unddel = fendcore + d1 - 1;
+	undap1 = fendcore + d1;
+	undap2 = fendcore + d2 + 1;
 #ifdef TRACE
 	if (trace)
 		vudump("after save");
@@ -685,9 +707,11 @@ vfindcol(i)
 {
 	register char *cp;
 	register int (*OO)() = Outchar;
+	char *s;
 
 	Outchar = qcount;
-	ignore(qcolumn(linebuf - 1, NOSTR));
+	s = linebuf;
+	ignore(qcolumn(s - 1, NOSTR));
 	for (cp = linebuf; *cp && vcntcol < i; cp++)
 		ex_putchar(*cp);
 	if (cp != linebuf)

@@ -112,9 +112,9 @@ typedef	short	bool;
 struct	option {
 	char	*oname;
 	char	*oabbrev;
-	short	otype;		/* Types -- see below */
-	short	odefault;	/* Default value */
-	short	ovalue;		/* Current value */
+	int	otype;		/* Types -- see below */
+	int	odefault;	/* Default value */
+	int	ovalue;		/* Current value */
 	char	*osvalue;
 };
 
@@ -256,7 +256,7 @@ var	long	bsize;		/* Block size for disk i/o */
 /*
  * Macros
  */
-#define	CP(a, b)	(ignore(strcpy(a, b)))
+#define	CP(a, b)	memmove(a, b, strlen(b) + 1)
 			/*
 			 * FIXUNDO: do we want to mung undo vars?
 			 * Usually yes unless in a macro or global.

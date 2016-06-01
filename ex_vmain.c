@@ -34,7 +34,7 @@ vmain(void)
 	char esave[TUBECOLS];
 	char *oglobp;
 	short d;
-	line *addr;
+	size_t addr;
 	int ind, nlput;
 	int shouldpo = 0;
 	int onumber, olist, (*OPline)(), (*OPutchar)();
@@ -50,7 +50,7 @@ vmain(void)
 		globp = initev;
 		hadcnt = cnt = 0;
 		i = tchng;
-		addr = dot;
+		addr = dot - fendcore;
 		goto doinit;
 	}
 
@@ -418,9 +418,9 @@ reread:
 		case CTRL('f'):
 			vsave();
 			if (vcnt > 2) {
-				addr = dot + (vcnt - vcline) - 2 + (cnt-1)*basWLINES;
-				forbid(addr > dol);
-				dot = addr;
+				addr = (dot - fendcore) + (vcnt - vcline) - 2 + (cnt-1)*basWLINES;
+				forbid(fendcore + addr > dol);
+				dot = fendcore + addr;
 				vcnt = vcline = 0;
 			}
 			vzop(0, 0, '+');
@@ -433,9 +433,9 @@ reread:
 		case CTRL('b'):
 			vsave();
 			if (one + vcline != dot && vcnt > 2) {
-				addr = dot - vcline + 2 - (cnt-1)*basWLINES;
-				forbid (addr <= zero);
-				dot = addr;
+				addr = (dot - fendcore) - vcline + 2 - (cnt-1)*basWLINES;
+				forbid (fendcore + addr <= zero);
+				dot = fendcore + addr;
 				vcnt = vcline = 0;
 			}
 			vzop(0, 0, '^');
@@ -781,7 +781,7 @@ insrt:
 			 * We thus put a catch in here.  If we didn't and
 			 * there was an error we would end up in command mode.
 			 */
-			addr = dol;	/* old dol */
+			addr = dol - fendcore;	/* old dol */
 			CATCH
 				vremote(1, vreg ? putreg : put, vreg);
 			ONERR
@@ -793,7 +793,7 @@ insrt:
 				}
 			ENDCATCH
 			splitw = 0;
-			nlput = dol - addr + 1;
+			nlput = dol - (fendcore + addr) + 1;
 			if (!i) {
 				/*
 				 * Increment undap1, undap2 to make up
@@ -878,7 +878,7 @@ pfixup:
 			oglobp = globp;
 			globp = "file";
 gogo:
-			addr = dot;
+			addr = dot - fendcore;
 			vsave();
 			goto doinit;
 
@@ -904,7 +904,7 @@ gogo:
 			forbid (hadcnt);
 			vsave();
 			i = tchng;
-			addr = dot;
+			addr = dot - fendcore;
 			if (readecho(c)) {
 				esave[0] = 0;
 				goto fixup;
@@ -1019,7 +1019,7 @@ fixup:
 				Vlines = lineDOL();
 				if (!inglobal)
 					savevis();
-				addr = zero;
+				addr = zero - fendcore;
 				vcnt = 0;
 				if (esave[0] == 0)
 					copy(esave, vtube[WECHO], TUBECOLS);
@@ -1028,7 +1028,7 @@ fixup:
 			/*
 			 * If the current line moved reset the cursor position.
 			 */
-			if (dot != addr) {
+			if (dot != fendcore + addr) {
 				vmoving = 0;
 				cursor = 0;
 			}
@@ -1037,8 +1037,8 @@ fixup:
 			 * If current line is not on screen or if we are
 			 * in open mode and . moved, then redraw.
 			 */
-			i = vcline + (dot - addr);
-			if (i < 0 || i >= vcnt && i >= -vcnt || state != VISUAL && dot != addr) {
+			i = vcline + dot - (fendcore + addr);
+			if (i < 0 || i >= vcnt && i >= -vcnt || state != VISUAL && dot != fendcore + addr) {
 				if (state == CRTOPEN)
 					vup1();
 				if (vcnt > 0)

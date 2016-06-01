@@ -672,7 +672,10 @@ suspend:
 /* version */
 				tail("version");
 				setNAEOL();
-				ex_printf("@(#) Version 3.7, 6/7/85."+5);
+				ex_printf("@(#) Version 3.7, 6/7/85"
+				    " (4.4BSD).  git "
+				    "160601 10:27"
+				    + 5);
 				noonl();
 				continue;
 
@@ -784,7 +787,7 @@ caseline:
 			nonzero();
 			if (seensemi)
 				addr1 = addr2;
-			getline(*addr1);
+			ex_getline(*addr1);
 			if (c == CTRL('k')) {
 				flush1();
 				destline--;

@@ -545,15 +545,15 @@ fail_lock:
 
 rop2()
 {
-	line *first, *last, *a;
+	size_t first, last, a;
 	struct stat statb;
 
 	deletenone();
 	clrstats();
-	first = addr2 + 1;
+	first = addr2 - fendcore + 1;
 	bsize = LBSIZE;
 	ignore(append(getfile, addr2));
-	last = dot;
+	last = dot - fendcore;
 	/*
 	 *	if the modeline variable is set,
 	 *	check the first and last five lines of the file
@@ -563,7 +563,7 @@ rop2()
 		for (a=first; a<=last; a++) {
 			if (a==first+5 && last-first > 10)
 				a = last - 4;
-			getline(*a);
+			ex_getline(*(fendcore + a));
 			checkmodeline(linebuf);
 		}
 	}
@@ -894,7 +894,7 @@ putfile(int isfilter)
 	nib = bsize;
 	fp = genbuf;
 	do {
-		getline(*a1++);
+		ex_getline(*a1++);
 		lp = linebuf;
 		for (;;) {
 			if (--nib < 0) {

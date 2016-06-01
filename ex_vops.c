@@ -183,7 +183,7 @@ bool show;	/* if true update the screen */
 void
 vmacchng(bool fromvis)
 {
-	line *savedot, *savedol;
+	size_t savedot, savedol;
 	char *savecursor;
 	char savelb[LBSIZE];
 	int nlines, more;
@@ -212,13 +212,15 @@ vmacchng(bool fromvis)
 #ifdef TRACE
 		vudump("before vmacchng hairy case");
 #endif
-		savedot = dot; savedol = dol; savecursor = cursor;
+		savedot = dot - fendcore;
+		savedol = dol - fendcore;
+		savecursor = cursor;
 		CP(savelb, linebuf);
 		nlines = dol - zero;
 		while ((line *) endcore - truedol < nlines)
 			if (morelines() < 0) {
-				dot = savedot;
-				dol = savedol;
+				dot = fendcore + savedot;
+				dol = fendcore + savedol;
 				cursor = savecursor;
 				CP(linebuf, savelb);
 				error("Out of memory@- too many lines to undo");
@@ -243,14 +245,16 @@ vmacchng(bool fromvis)
 #endif
 
 		/* Restore current state from where saved */
-		more = savedol - dol; /* amount we shift everything by */
+		more = savedol - (dol - fendcore); /* amount we shift everything by */
 		if (more)
 			(*(more>0 ? copywR : copyw))(savedol+1, dol+1, truedol-dol);
 		unddol += more; truedol += more; undap2 += more;
 
 		truedol -= nlines;
 		copyw(zero+1, truedol+1, nlines);
-		dot = savedot; dol = savedol ; cursor = savecursor;
+		dot = fendcore + savedot;
+		dol = fendcore + savedol;
+		cursor = savecursor;
 		CP(linebuf, savelb);
 		vch_mac = VC_MANYCHANGE;
 
@@ -453,7 +457,7 @@ vchange(int c)
 			 */
 			*cursor = 0;
 			strcpy(genbuf, linebuf);
-			getline(*wdot);
+			ex_getline(*wdot);
 			if (strlen(genbuf) + strlen(wcursor) > LBSIZE - 2) {
 				getDOT();
 				beep();
@@ -827,7 +831,7 @@ xdw()
 		if (vpastwh(linebuf) >= cursor)
 			wcursor = 0;
 		else {
-			getline(*wdot);
+			ex_getline(*wdot);
 			wcursor = strend(linebuf);
 			getDOT();
 		}

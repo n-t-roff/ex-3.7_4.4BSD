@@ -63,7 +63,7 @@ struct	option options[NOPTS + 1] = {
 	"hardtabs",	"ht",	NUMERIC,	8,	8,	0,
 	"ignorecase",	"ic",	ONOFF,		0,	0,	0,
 #ifndef	UNIX_SBRK
-	"linelimit",	"ll",	NUMERIC,	2000,	2000,	0,
+	"linelimit",	"ll",	NUMERIC,	2048,	2048,	0,
 #endif
 	"lisp",		0,	ONOFF,		0,	0,	0,
 	"list",		0,	ONOFF,		0,	0,	0,
