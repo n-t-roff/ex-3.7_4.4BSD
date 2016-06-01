@@ -46,7 +46,7 @@ all: ${PROG}
 ${PROG}: ${OBJS}
 	${CC} ${CFLAGS} ${_CFLAGS} ${LDFLAGS} ${_LDFLAGS} -o $@ ${OBJS} ${LDADD}
 
-install: ${BINDIR} ${LIBEXECDIR} ${PRESERVEDIR} ${MANDIR}/man1
+install: ${BINDIR} ${LIBEXECDIR} ${MANDIR}/man1
 	install ${PROG} ${BINDIR}/
 	for i in vi view edit; do \
 		ln -sf ${BINDIR}/${PROG} ${BINDIR}/$$i; \
@@ -69,12 +69,8 @@ uninstall:
 		rm -f ${LIBEXECDIR}/$$i; \
 	done
 
-${BINDIR} ${LIBDIR} ${MANDIR}/man1:
+${BINDIR} ${LIBEXECDIR} ${MANDIR}/man1:
 	mkdir -p $@
-
-${PRESERVEDIR}:
-	mkdir -p $@
-	chmod 1777 $@
 
 clean:
 	for i in ${SUBDIR}; do \
