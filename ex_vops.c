@@ -247,7 +247,8 @@ vmacchng(bool fromvis)
 		/* Restore current state from where saved */
 		more = savedol - (dol - fendcore); /* amount we shift everything by */
 		if (more)
-			(*(more>0 ? copywR : copyw))(savedol+1, dol+1, truedol-dol);
+			(*(more > 0 ? copywR : copyw))(fendcore + savedol + 1,
+			    dol + 1, truedol - dol);
 		unddol += more; truedol += more; undap2 += more;
 
 		truedol -= nlines;

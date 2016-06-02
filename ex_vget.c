@@ -76,7 +76,7 @@ int	doingread = 0;
  */
 getbr()
 {
-	char ch;
+	unsigned char ch;
 	register int c, d;
 	register char *colp;
 #define BEEHIVE
@@ -251,8 +251,7 @@ peekkey()
  * Read a line from the echo area, with single character prompt c.
  * A return value of 1 means the user blewit or blewit away.
  */
-readecho(c)
-	char c;
+readecho(int c)
 {
 	register char *sc = cursor;
 	register int (*OP)();

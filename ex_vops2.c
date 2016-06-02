@@ -426,11 +426,7 @@ back1()
  * involved, including the prompt for readline.
  */
 char *
-vgetline(cnt, gcursor, aescaped, commch)
-	int cnt;
-	register char *gcursor;
-	bool *aescaped;
-	char commch;
+vgetline(int cnt, char *gcursor, bool *aescaped, int commch)
 {
 	register int c, ch;
 	register char *cp;
@@ -883,9 +879,7 @@ vgetsplit()
  * allowed that will yield total line length less than
  * LBSIZE characters and also does hacks for the R command.
  */
-vmaxrep(ch, cnt)
-	char ch;
-	register int cnt;
+vmaxrep(int ch, int cnt)
 {
 	register int len, replen;
 

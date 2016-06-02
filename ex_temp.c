@@ -359,7 +359,7 @@ synctmp(void)
 			oblock = *bp + 1;
 			bp[1] = -1;
 		}
-		lseek(tfile, (long) (unsigned) *bp * BUFSIZ, 0);
+		lseek(tfile, *bp * BUFSIZ, 0);
 		cnt = ((dol - a) + 2) * sizeof (line);
 		if (cnt > BUFSIZ)
 			cnt = BUFSIZ;
@@ -456,7 +456,7 @@ oops:
 		if (rfile < 0)
 			goto oops;
 	}
-	lseek(rfile, (long) b * BUFSIZ, 0);
+	lseek(rfile, b * BUFSIZ, 0);
 	if ((*iofcn)(rfile, rbuf, BUFSIZ) != BUFSIZ)
 		goto oops;
 	rblock = b;
@@ -529,8 +529,7 @@ shread()
 
 int	getREG();
 
-putreg(c)
-	char c;
+putreg(int c)
 {
 	register line *odot = dot;
 	register line *odol = dol;
@@ -570,8 +569,7 @@ putreg(c)
 	notecnt = cnt;
 }
 
-partreg(c)
-	char c;
+partreg(int c)
 {
 
 	return (mapreg(c)->rg_flags);
@@ -699,10 +697,7 @@ rbflush(void)
 }
 
 /* Register c to char buffer buf of size buflen */
-regbuf(c, buf, buflen)
-char c;
-char *buf;
-int buflen;
+regbuf(int c, char *buf, int buflen)
 {
 	register char *p, *lp;
 

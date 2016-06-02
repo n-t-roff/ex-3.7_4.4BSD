@@ -257,8 +257,7 @@ smunch(col, ocp)
 
 char	*cntrlhm =	"^H discarded\n";
 
-checkjunk(c)
-	char c;
+checkjunk(int c)
 {
 
 	if (junkbs == 0 && c == '\b') {

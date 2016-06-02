@@ -553,12 +553,11 @@ fail_lock:
 rop2()
 {
 	size_t first, last, a;
-	struct stat statb;
 
 	deletenone();
 	clrstats();
 	first = addr2 - fendcore + 1;
-	bsize = LBSIZE;
+	bsize = LBSIZE; /* Don't remove! -CK- */
 	ignore(append(getfile, addr2));
 	last = dot - fendcore;
 	/*
@@ -827,7 +826,7 @@ char *nextip;
 
 getfile()
 {
-	register short c;
+	int c;
 	register char *lp, *fp;
 
 	lp = linebuf;

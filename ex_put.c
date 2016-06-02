@@ -66,8 +66,7 @@ setnumb(t))()
  * Format c for list mode; leave things in common
  * with normal print mode to be done by normchar.
  */
-listchar(c)
-	register short c;
+listchar(int c)
 {
 
 	c &= (TRIM|QUOTE);
@@ -268,7 +267,7 @@ flush()
 flush1()
 {
 	register char *lp;
-	register short c;
+	int c;
 
 	*linp = 0;
 	lp = linb;

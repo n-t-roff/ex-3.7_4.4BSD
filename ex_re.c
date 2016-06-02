@@ -187,7 +187,7 @@ substitute(c)
 		save12(), undkind = UNDCHANGE;
 	stotal = 0;
 	slines = 0;
-	for (addr = addr1 - fendcore; addr <= addr2; addr++) {
+	for (addr = addr1 - fendcore; fendcore + addr <= addr2; addr++) {
 		scount = hopcount = 0;
 		if (dosubcon(0, fendcore + addr) == 0)
 			continue;
@@ -404,7 +404,7 @@ again:
 
 getch()
 {
-	char c;
+	unsigned char c;
 
 	if (read(2, &c, 1) != 1)
 		return (EOF);
