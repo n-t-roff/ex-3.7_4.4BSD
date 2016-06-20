@@ -29,7 +29,7 @@ static char sccsid[] = "@(#)ex_temp.c	8.1 (Berkeley) 6/9/93";
 #define	EPOSITION	13
 #endif
 
-static void blkio(short, char *, int (*)());
+static void blkio(int, char *, ssize_t (*)());
 static void rbflush(void);
 
 char	tfname[40];
@@ -135,8 +135,8 @@ cleanup(all)
 	}
 }
 
-ex_getline(tl)
-	line tl;
+void
+ex_getline(line tl)
 {
 	register char *bp, *lp;
 	register int nl;
@@ -279,7 +279,7 @@ int	stilinc;	/* up to here not written yet */
 #endif
 
 static void
-blkio(short b, char *buf, int (*iofcn)())
+blkio(int b, char *buf, ssize_t (*iofcn)())
 {
 
 #ifdef VMUNIX

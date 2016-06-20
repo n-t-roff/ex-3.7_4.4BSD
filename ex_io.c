@@ -938,7 +938,8 @@ putfile(int isfilter)
  * the edited file then we consider it to have changed since it is
  * now likely scrambled.
  */
-wrerror()
+void
+wrerror(void)
 {
 
 	if (eq(file, savedfile) && edited)
@@ -1012,7 +1013,8 @@ source(char *fil, bool okfail)
 /*
  * Clear io statistics before a read or write.
  */
-clrstats()
+void
+clrstats(void)
 {
 
 	ninbuf = 0;

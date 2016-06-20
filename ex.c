@@ -103,11 +103,6 @@ main(ac, av)
 	bool itag = 0;
 	bool fast = 0;
 	extern void onemt();
-#ifdef UNIX_SBRK
-	extern char *sbrk();
-#else
-	extern char *malloc();
-#endif
 #ifdef TRACE
 	register char *tracef;
 #endif

@@ -31,13 +31,13 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
+#if 0
 static char copyright[] =
 "@(#) Copyright (c) 1991, 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
 #endif /* not lint */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex3.7preserve.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -83,7 +83,7 @@ static char sccsid[] = "@(#)ex3.7preserve.c	8.1 (Berkeley) 6/9/93";
 
 struct 	header {
 	time_t	Time;			/* Time temp file last updated */
-	int	Uid;			/* This users identity */
+	uid_t	Uid;			/* This users identity */
 #ifdef VMUNIX
 	int	Flines;
 #else
@@ -93,11 +93,13 @@ struct 	header {
 	short	Blocks[LBLKS];		/* Blocks where line pointers stashed */
 } H;
 
+static int copyout(char *);
 static void notify(int, char *, int, time_t);
+static void error(char *);
+static void usage(void);
 
-main(argc, argv)
-	int argc;
-	char **argv;
+int
+main(int argc, char **argv)
 {
 	extern int optind;
 	register DIR *tf;
@@ -157,11 +159,11 @@ main(argc, argv)
 		err |= copyout(path);
 	}
 	(void)closedir(tf);
-	exit(err);
+	return err;
 }
 
-copyout(name)
-	char *name;
+static int
+copyout(char *name)
 {
 	struct stat sb;
 	register int ifd, ofd, nr, nw, off, rval;
@@ -332,8 +334,8 @@ notify(int uid, char *fname, int flag, time_t time)
  *	never exactly the same
  *	just like a snowflake 
  */
-error(msg)
-	char *msg;
+static void
+error(char *msg)
 {
 	(void)fprintf(stderr, "ex3.7preserve: ");
 	if (msg)
@@ -342,7 +344,8 @@ error(msg)
 	exit(1);
 }
 
-usage()
+static void
+usage(void)
 {
 	(void)fprintf(stderr, "usage: ex3.7preserve [-a]\n");
 	exit(1);

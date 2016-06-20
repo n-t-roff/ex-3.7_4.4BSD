@@ -1,3 +1,4 @@
+VERSION=3.7
 #	@(#)Makefile	8.1 (Berkeley) 6/18/93
 
 # Things that can be turned off to save space:
@@ -10,24 +11,31 @@
 #
 # If your system expands tabs to 4 spaces you should -DTABS=4 below.
 #
-VERSION=3.7
 PREFIX=	${DESTDIR}/usr/local
 BINDIR=	${PREFIX}/bin
 MANDIR=	${PREFIX}/share/man
 LIBEXECDIR=${PREFIX}/libexec
+#
+# Either none or both of the next two lines needs to be uncommented
+#
+#D_SBRK=	-DUNIX_SBRK
+#MALLOC_C=mapmalloc.c
+#
 PROG=	ex
 SUBDIR=	ex3.7recover ex3.7preserve
-_CFLAGS=-Wall -Wextra
-#	-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls \
-#	-fsanitize=address -fsanitize=undefined -fsanitize=integer
+DBG_CFLAGS=-Wall -Wextra \
+	-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls \
+	-fsanitize=undefined -fsanitize=integer
+	-fsanitize=address
+_CFLAGS=#${DBG_CFLAGS}
 _CPPFLAGS=-DTABS=8 -DLISPCODE -DCHDIR -DUCVISUAL -DVMUNIX -DFASTTAG -DUSG3TTY \
-	-DLIBEXECDIR='"${LIBEXECDIR}"'
+	${D_SBRK} -DLIBEXECDIR='"${LIBEXECDIR}"'
 _LDFLAGS=-s
 SRCS=	ex.c ex_addr.c ex_cmds.c ex_cmds2.c ex_cmdsub.c ex_data.c ex_extern.c \
 	ex_get.c ex_io.c ex_put.c ex_re.c ex_set.c ex_subr.c ex_tagio.c \
 	ex_temp.c ex_tty.c ex_unix.c ex_v.c ex_vadj.c ex_vget.c ex_vmain.c \
 	ex_voper.c ex_vops.c ex_vops2.c ex_vops3.c ex_vput.c ex_vwind.c \
-	printf.c
+	printf.c ${MALLOC_C}
 OBJS=	${SRCS:.c=.o}
 
 # There's a boostrap problem here -- ex is necessary to build ex_vars.h.

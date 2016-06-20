@@ -375,7 +375,7 @@ int	(*setnumb())();
 line	*address();
 char	*cgoto();
 char	*genindent();
-char	*getblock();
+char	*getblock(line, int);
 char	*getenv();
 #ifdef	vms
 char	*getlog();
@@ -488,6 +488,10 @@ void	vdown(int, int, bool);
 void	vup(int, int, bool);
 void	ex_printf(const char *, ...);
 void	eend(int (*)());
+void	wrerror(void);
+void	clrstats(void);
+void	ex_getline(line);
+void	syserror(void);
 
 /*
  * C doesn't have a (void) cast, so we have to fake it for lint's sake.

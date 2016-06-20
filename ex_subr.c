@@ -394,8 +394,6 @@ merror1(seekpt)
 morelines()
 {
 #ifdef UNIX_SBRK
-	char *sbrk();
-
 	if ((int) sbrk(1024 * sizeof (line)) == -1)
 		return (-1);
 	endcore += 1024;
@@ -672,7 +670,8 @@ strcLIN(dp)
 	CP(linebuf, dp);
 }
 
-syserror()
+void
+syserror(void)
 {
 	char *strerror();
 
