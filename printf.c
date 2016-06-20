@@ -7,20 +7,17 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)printf.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
-#ifndef lint
+#if 0
 /* The pwb version this is based on */
 static char *printf_id = "@(#) printf.c:2.2 6/5/79";
 #endif /* not lint */
 
-#if __STDC__
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
+#include "ex.h"
  
 /*
  * This version of printf is compatible with the Version 7 C
@@ -37,20 +34,19 @@ static char *printf_id = "@(#) printf.c:2.2 6/5/79";
 
 static int width, sign, fill;
 
-char *_p_dconv();
+static char *_p_dconv(long, char *);
+static void _p_emit(char *, char *);
 
-/* VARARGS */
-#if __STDC__
 void
-ex_printf(const char *fmt0, ...)
-#else
-ex_printf(fmt0, va_alist)
-	char *fmt0;
-	va_dcl
-#endif
+ex_printf(char *fmt, ...)
 {
-	register char *fmt;
 	va_list ap;
+	va_start(ap, fmt);
+	ex_vprintf(fmt, ap);
+}
+
+void
+ex_vprintf(char *fmt, va_list ap) {
 	char fcode;
 	int prec;
 	int length,mask1,nbits,n;
@@ -59,12 +55,6 @@ ex_printf(fmt0, va_alist)
 	char *ptr;
 	char buf[134];
 
-#if __STDC__
-	va_start(ap, fmt0);
-#else
-	va_start(ap);
-#endif
-	fmt = (char *)fmt0;
 	for (;;) {
 		/* process format string first */
 		while ((fcode = *fmt++)!='%') {
@@ -193,7 +183,7 @@ ex_printf(fmt0, va_alist)
 					*--bptr = ((int) num & mask1) + 060;
 				    else
 					*--bptr = ((int) num & mask1) + 0127;
-				while (num = (num >> nbits) & mask2);
+				while ((num = (num >> nbits) & mask2));
 				
 				if (fcode=='o') {
 					if (n)
@@ -229,7 +219,7 @@ ex_printf(fmt0, va_alist)
 					else
 						num = (long) n;
 				}
-				if (n = (fcode != 'u' && num < 0))
+				if ((n = (fcode != 'u' && num < 0)))
 					num = -num;
 				/* now convert to digits */
 				bptr = _p_dconv(num, buf);
@@ -263,10 +253,8 @@ ex_printf(fmt0, va_alist)
  * This program assumes it is running on 2's complement machine
  * with reasonable overflow treatment.
  */
-char *
-_p_dconv(value, buffer)
-	long value;
-	char *buffer;
+static char *
+_p_dconv(long value, char *buffer)
 {
 	register char *bp;
 	register int svalue;
@@ -335,9 +323,8 @@ _p_dconv(value, buffer)
  * any padding in right-justification (to avoid printing "-3" as
  * "000-3" where "-0003" was intended).
  */
-_p_emit(s, send)
-	register char *s;
-	char *send;
+static void
+_p_emit(char *s, char *send)
 {
 	char cfill;
 	register int alen;

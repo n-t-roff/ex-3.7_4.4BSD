@@ -131,7 +131,6 @@ gettty()
 	register int c = 0;
 	register char *cp = genbuf;
 	char hadup = 0;
-	int numbline();
 	extern int (*Pline)();
 	int offset = Pline == numbline ? 8 : 0;
 	int ch;

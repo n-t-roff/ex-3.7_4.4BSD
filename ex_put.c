@@ -7,10 +7,11 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex_put.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
+#include <stdarg.h>
 #include "ex.h"
 #include "ex_tty.h"
 #include "ex_vis.h"
@@ -22,8 +23,14 @@ static char sccsid[] = "@(#)ex_put.c	8.1 (Berkeley) 6/9/93";
  * line numbering and the like).
  */
 
+static void flush2(void);
 static void slobber(int);
 static void normchar(int);
+static void plodput(int);
+static int plod(int);
+static void ttcharoff(void);
+static void normal(ttymode);
+static void ex_sTTY(int);
 
 /*
  * The routines outchar, putchar and pline are actually
@@ -39,10 +46,9 @@ int	(*Put_char)() = normchar;
 int	(*Pline)() = normline;
 
 int (*
-setlist(t))()
-	bool t;
+setlist(bool t))()
 {
-	register int (*P)();
+	void (*P)();
 
 	listf = t;
 	P = Put_char;
@@ -51,10 +57,9 @@ setlist(t))()
 }
 
 int (*
-setnumb(t))()
-	bool t;
+setnumb(bool t))()
 {
-	register int (*P)();
+	void (*P)();
 
 	numberf = t;
 	P = Pline;
@@ -66,6 +71,7 @@ setnumb(t))()
  * Format c for list mode; leave things in common
  * with normal print mode to be done by normchar.
  */
+void
 listchar(int c)
 {
 
@@ -143,8 +149,8 @@ normchar(int c)
 /*
  * Print a line with a number.
  */
-numbline(i)
-	int i;
+void
+numbline(int i)
 {
 
 	if (shudclob)
@@ -156,7 +162,8 @@ numbline(i)
 /*
  * Normal line output, no numbering.
  */
-normline()
+void
+normline(void)
 {
 	register char *cp;
 
@@ -222,8 +229,8 @@ static	bool phadnl;
 /*
  * Indirect to current definition of putchar.
  */
-ex_putchar(c)
-	int c;
+void
+ex_putchar(int c)
 {
 
 	(*Put_char)(c);
@@ -235,8 +242,8 @@ ex_putchar(c)
  * Otherwise flush into next level of buffering when
  * small buffer fills or at a newline.
  */
-termchar(c)
-	int c;
+void
+termchar(int c)
 {
 
 	if (pfast == 0 && phadnl)
@@ -252,7 +259,8 @@ termchar(c)
 	}
 }
 
-flush()
+void
+flush(void)
 {
 
 	flush1();
@@ -264,7 +272,8 @@ flush()
  * Work here is destroying motion into positions, and then
  * letting fgoto do the optimized motion.
  */
-flush1()
+void
+flush1(void)
 {
 	register char *lp;
 	int c;
@@ -325,7 +334,8 @@ flush1()
 	linp = linb;
 }
 
-flush2()
+static void
+flush2(void)
 {
 
 	fgoto();
@@ -339,7 +349,8 @@ flush2()
  * column position implied by wraparound or the lack thereof and
  * rolling up the screen to get destline on the screen.
  */
-fgoto()
+void
+fgoto(void)
 {
 	register int l, c;
 
@@ -426,8 +437,8 @@ fgoto()
  * Tab to column col by flushing and then setting destcol.
  * Used by "set all".
  */
-tab(col)
-	int col;
+void
+tab(int col)
 {
 
 	flush1();
@@ -443,7 +454,8 @@ tab(col)
 
 static int plodcnt, plodflg;
 
-plodput(c)
+static void
+plodput(int c)
 {
 
 	if (plodflg)
@@ -452,7 +464,8 @@ plodput(c)
 		putch(c);
 }
 
-plod(cnt)
+static int
+plod(int cnt)
 {
 	register int i, j, k;
 	register int soutcol, soutline;
@@ -725,7 +738,8 @@ out:
  * Approximate because kill character echoes newline with
  * no feedback and also because of long input lines.
  */
-noteinp()
+void
+noteinp(void)
 {
 
 	outline++;
@@ -743,7 +757,8 @@ noteinp()
  * On cursor addressible terminals setting to unknown
  * will force a cursor address soon.
  */
-termreset()
+void
+termreset(void)
 {
 
 	endim();
@@ -766,13 +781,15 @@ termreset()
  */
 char	*obp = obuf;
 
-draino()
+void
+draino(void)
 {
 
 	obp = obuf;
 }
 
-flusho()
+void
+flusho(void)
 {
 
 	if (obp != obuf) {
@@ -785,7 +802,8 @@ flusho()
 	}
 }
 
-putnl()
+void
+putnl(void)
 {
 
 	ex_putchar('\n');
@@ -803,8 +821,8 @@ ex_putS(cp)
 }
 #endif
 
-putch(c)
-	int c;
+void
+putch(int c)
 {
 
 #ifdef OLD3BTTY		/* mjm */
@@ -823,8 +841,8 @@ putch(c)
 /*
  * Put with padding
  */
-putpad(cp)
-	char *cp;
+void
+putpad(char *cp)
 {
 
 	flush();
@@ -834,7 +852,8 @@ putpad(cp)
 /*
  * Set output through normal command mode routine.
  */
-setoutt()
+void
+setoutt(void)
 {
 
 	Outchar = termchar;
@@ -844,20 +863,23 @@ setoutt()
  * Printf (temporarily) in list mode.
  */
 /*VARARGS1*/
-lprintf(cp, dp)
-	char *cp, *dp;
+void
+lprintf(char *fmt, ...)
 {
 	register int (*P)();
+	va_list ap;
 
+	va_start(ap, fmt);
 	P = setlist(1);
-	ex_printf(cp, dp);
+	ex_vprintf(fmt, ap);
 	Put_char = P;
 }
 
 /*
  * Newline + flush.
  */
-putNFL()
+void
+putNFL(void)
 {
 
 	putnl();
@@ -915,7 +937,7 @@ pstop(void)
  * Prep tty for open mode.
  */
 ttymode
-ostart()
+ostart(void)
 {
 	ttymode f;
 
@@ -955,7 +977,8 @@ ostart()
 }
 
 /* actions associated with putting the terminal in open mode */
-tostart()
+void
+tostart(void)
 {
 	putpad(VS);
 	putpad(KS);
@@ -1012,7 +1035,8 @@ ttcharoff()
 #endif
 
 #ifdef USG3TTY
-ttcharoff()
+static void
+ttcharoff(void)
 {
 	long vdisable;
 
@@ -1025,16 +1049,16 @@ ttcharoff()
 #ifdef VDSUSP
 	tty.c_cc[VDSUSP] = vdisable;
 #endif
-# ifdef VSTART
 	/*
 	 * The following is sample code if USG ever lets people change
 	 * their start/stop chars.  As long as they can't we can't get
 	 * into trouble so we just leave them alone.
 	 */
-	if (tty.c_cc[VSTART] != CTRL('q'))
-		tty.c_cc[VSTART] = vdisable;
-	if (tty.c_cc[VSTOP] != CTRL('s'))
-		tty.c_cc[VSTOP] = vdisable;
+# ifdef VSTART
+	tty.c_cc[VSTART] = vdisable;
+# endif
+# ifdef VSTOP
+	tty.c_cc[VSTOP] = vdisable;
 # endif
 }
 #endif
@@ -1042,8 +1066,8 @@ ttcharoff()
 /*
  * Stop open, restoring tty modes.
  */
-ostop(f)
-	ttymode f;
+void
+ostop(ttymode f)
 {
 
 #ifndef USG3TTY
@@ -1057,7 +1081,8 @@ ostop(f)
 }
 
 /* Actions associated with putting the terminal in the right mode. */
-tostop()
+void
+tostop(void)
 {
 	putpad(VE);
 	putpad(KE);
@@ -1090,8 +1115,8 @@ vraw()
 /*
  * Restore flags to normal state f.
  */
-normal(f)
-	ttymode f;
+static void
+normal(ttymode f)
 {
 
 	if (normtty > 0) {
@@ -1104,8 +1129,7 @@ normal(f)
  * Straight set of flags to state f.
  */
 ttymode
-setty(f)
-	ttymode f;
+setty(ttymode f)
 {
 #ifndef USG3TTY
 	register int ot = tty.sg_flags;
@@ -1134,8 +1158,8 @@ setty(f)
 	return (ot);
 }
 
-ex_gTTY(i)
-	int i;
+void
+ex_gTTY(int i)
 {
 
 #ifndef USG3TTY
@@ -1157,8 +1181,8 @@ ex_gTTY(i)
  * ex_sTTY: set the tty modes on file descriptor i to be what's
  * currently in global "tty".  (Also use nttyc if needed.)
  */
-ex_sTTY(i)
-	int i;
+static void
+ex_sTTY(int i)
 {
 
 #ifndef USG3TTY
@@ -1193,7 +1217,8 @@ ex_sTTY(i)
 /*
  * Print newline, or blank if in open/visual
  */
-noonl()
+void
+noonl(void)
 {
 
 	ex_putchar(Outchar != termchar ? ' ' : '\n');
