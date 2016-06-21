@@ -425,7 +425,7 @@ void	vfilter(void);
 #ifdef CBREAK
 void	vintr();
 #endif
-int	vputch();
+void	vputch(int);
 void	vshftop(void);
 int	yank();
 void	setall(void);

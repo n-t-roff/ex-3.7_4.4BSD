@@ -20,6 +20,11 @@ static void vneedpos(int);
 static void vnpins(int);
 static void godm(void);
 static void enddm(void);
+static void vigotoCL(int);
+static void vgotab(void);
+static void vrigid(void);
+static void vishft(void);
+static void viin(int);
 
 /*
  * Deal with the screen, clearing, cursor positioning, putting characters
@@ -27,7 +32,8 @@ static void enddm(void);
  * Really hard stuff here is utilizing insert character operations
  * on intelligent terminals which differs widely from terminal to terminal.
  */
-vclear()
+void
+vclear(void)
 {
 
 #ifdef ADEBUG
@@ -46,9 +52,8 @@ vclear()
 /*
  * Clear memory.
  */
-vclrbyte(cp, i)
-	register char *cp;
-	register int i;
+void
+vclrbyte(char *cp, int i)
 {
 
 	if (i > 0)
@@ -60,9 +65,8 @@ vclrbyte(cp, i)
 /*
  * Clear a physical display line, high level.
  */
-vclrlin(l, tp)
-	int l;
-	line *tp;
+void
+vclrlin(int l, line *tp)
 {
 
 	vigoto(l, 0);
@@ -169,7 +173,8 @@ vclrech(bool didphys)
  * the state variable splitw so we wont rollup
  * when we move the cursor there.
  */
-fixech()
+void
+fixech(void)
 {
 
 	splitw++;
@@ -183,8 +188,8 @@ fixech()
 /*
  * Put the cursor ``before'' cp.
  */
-vcursbef(cp)
-	register char *cp;
+void
+vcursbef(char *cp)
 {
 
 	if (cp <= linebuf)
@@ -196,8 +201,8 @@ vcursbef(cp)
 /*
  * Put the cursor ``at'' cp.
  */
-vcursat(cp)
-	register char *cp;
+void
+vcursat(char *cp)
 {
 
 	if (cp <= linebuf && linebuf[0] == 0)
@@ -209,8 +214,8 @@ vcursat(cp)
 /*
  * Put the cursor ``after'' cp.
  */
-vcursaft(cp)
-	register char *cp;
+void
+vcursaft(char *cp)
 {
 
 	vgotoCL(column(cp));
@@ -220,7 +225,8 @@ vcursaft(cp)
  * Fix the cursor to be positioned in the correct place
  * to accept a command.
  */
-vfixcurs()
+void
+vfixcurs(void)
 {
 
 	vsetcurs(cursor);
@@ -230,8 +236,8 @@ vfixcurs()
  * Compute the column position implied by the cursor at ``nc'',
  * and move the cursor there.
  */
-vsetcurs(nc)
-	register char *nc;
+void
+vsetcurs(char *nc)
 {
 	register int col;
 
@@ -245,8 +251,8 @@ vsetcurs(nc)
 /*
  * Move the cursor invisibly, i.e. only remember to do it.
  */
-vigoto(y, x)
-	int y, x;
+void
+vigoto(int y, int x)
 {
 
 	destline = y;
@@ -257,7 +263,8 @@ vigoto(y, x)
  * Move the cursor to the position implied by any previous
  * vigoto (or low level hacking with destcol/destline as in readecho).
  */
-vcsync()
+void
+vcsync(void)
 {
 
 	vgoto(destline, destcol);
@@ -266,8 +273,8 @@ vcsync()
 /*
  * Goto column x of the current line.
  */
-vgotoCL(x)
-	register int x;
+void
+vgotoCL(int x)
 {
 
 	if (splitw)
@@ -279,8 +286,8 @@ vgotoCL(x)
 /*
  * Invisible goto column x of current line.
  */
-vigotoCL(x)
-	register int x;
+static void
+vigotoCL(int x)
 {
 
 	if (splitw)
@@ -434,7 +441,8 @@ vgoto(int y, int x)
  * with a QUOTE.  We use QUOTE internally to represent a position
  * which is part of the expansion of a tab.
  */
-vgotab()
+static void
+vgotab(void)
 {
 	register int i = tabcol(destcol, value(TABSTOP)) - destcol;
 
@@ -462,7 +470,8 @@ int	slakused;		/* This much of tabslack will be used up */
  * of the screen image buffer so it is easier for us to
  * maniuplate them.
  */
-vprepins()
+void
+vprepins(void)
 {
 	register int i;
 	register char *cp = vtube0;
@@ -682,7 +691,8 @@ vinschar(int c)
  * Rigidify the rest of the line after the first
  * group of following tabs, typing blanks over ``spaces''.
  */
-vrigid()
+static void
+vrigid(void)
 {
 	register int col;
 	register char *tp = vtube0 + tabend;
@@ -749,7 +759,8 @@ vnpins(int dosync)
  * Do the shift of the next tabstop implied by
  * insertion so it expands.
  */
-vishft()
+static void
+vishft(void)
 {
 	int tshft = 0;
 	int j;
@@ -845,8 +856,8 @@ vishft()
 /*
  * Now do the insert of the characters (finally).
  */
-viin(c)
-	int c;		/* mjm: char --> int */
+static void
+viin(int c)
 {
 	register char *tp, *up;
 	register int i, j;
@@ -1033,7 +1044,8 @@ enddm(void)
  * if the terminal does all insertions a single character
  * at a time, since it branches based on whether IM is null.
  */
-goim()
+void
+goim(void)
 {
 
 	if (!insmode)
@@ -1041,7 +1053,8 @@ goim()
 	insmode = 1;
 }
 
-endim()
+void
+endim(void)
 {
 
 	if (insmode) {
@@ -1368,8 +1381,8 @@ tracec(c)
 /*
  * Put a character with possible tracing.
  */
-vputch(c)
-	int c;
+void
+vputch(int c)
 {
 
 #ifdef TRACE
