@@ -9,6 +9,7 @@
  *	@(#)ex.h	8.1 (Berkeley) 6/9/93
  */
 
+#include <stdarg.h>
 #ifdef V6
 #include <retrofit.h>
 #endif
@@ -364,9 +365,9 @@ char	*getpass();
 #define	NOSTR	(char *) 0
 #define	NOLINE	(line *) 0
 
-extern	int	(*Outchar)();
-extern	int	(*Pline)();
-extern	int	(*Put_char)();
+extern	void	(*Outchar)();
+extern	void	(*Pline)();
+extern	void	(*Put_char)();
 sig_t	oldhup;
 int	(*setlist(bool))();
 int	(*setnorm())();
@@ -374,32 +375,32 @@ int	(*setnorm())();
 int	(*setnumb(bool))();
 line	*address();
 char	*cgoto();
-char	*genindent();
+char	*genindent(int);
 char	*getblock(line, int);
 char	*getenv();
 #ifdef	vms
 char	*getlog();
 #endif
-line	*getmark();
+line	*getmark(int);
 char	*longname();
-char	*mesg();
+char	*mesg(char *);
 char	*place();
-char	*plural();
+char	*plural(long);
 line	*scanfor();
 line	*setin();
 char	*strcat();
 char	*strcpy();
-char	*strend();
+char	*strend(char *);
 char	*tailpath();
 char	*tgetstr();
 char	*tgoto();
 char	*ttyname();
-line	*vback();
-char	*vfindcol();
+line	*vback(line *, int);
+char	*vfindcol(int);
 char	*vgetline();
 char	*vinit();
-char	*vpastwh();
-char	*vskipwh();
+char	*vpastwh(char *);
+char	*vskipwh(char *);
 void	put(void);
 int	putreg();
 int	YANKreg();
@@ -414,9 +415,9 @@ off_t	lseek();
 void	normline(void);
 void	numbline(int);
 var	void (*oldquit)();
-void	onhup();
-void	onintr();
-void	onsusp();
+void	onhup(int);
+void	onintr(int);
+void	onsusp(int);
 void	putch(int);
 int	shift();
 void	termchar(int);
@@ -497,7 +498,7 @@ void	syserror(void);
 void	flush(void);
 void	flush1(void);
 void	fgoto(void);
-void	tab(int);
+void	ex_tab(int);
 void	noteinp(void);
 void	termreset(void);
 void	draino(void);
@@ -511,6 +512,49 @@ void	tostop(void);
 void	ex_gTTY(int);
 void	noonl(void);
 void	ex_putchar(int);
+int	any(int, char *);
+int	backtab(int);
+void	change(void);
+int	column(char *);
+void	comment(void);
+void	Copy(char *, char *, ssize_t);
+void	copyw(line *, line *, int);
+void	copywR(line *, line *, int);
+int	ctlof(int);
+void	dingdong(void);
+int	fixindent(int);
+void	filioerr(char *);
+void	getDOT(void);
+int	getn(char *);
+void	ignnEOF(void);
+int	iswhite(int);
+int	junk(int);
+void	killed(void);
+int	lineno(line *);
+int	lineDOL(void);
+int	lineDOT(void);
+void	markpr(line *);
+int	markreg(int);
+int	morelines(void);
+void	nonzero(void);
+int	notable(int);
+void	notempty(void);
+void	netchHAD(int);
+void	putmark(line *);
+void	putmk1(line *, int);
+int	qcolumn(char *, char *);
+void	save12(void);
+void	saveall(void);
+int	span(void);
+void	ex_sync(void);
+int	skipwh(void);
+void	strcLIN(char *);
+int	tabcol(int, int);
+int	whitecnt(char *);
+void	markit(line *);
+void	setrupt(void);
+int	preserve(void);
+void	ex_exit(int);
 
 /*
  * C doesn't have a (void) cast, so we have to fake it for lint's sake.

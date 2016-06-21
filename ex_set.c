@@ -172,10 +172,10 @@ prall()
 
 	for (; rows; rows--, op++) {
 		propt(op);
-		tab(24);
+		ex_tab(24);
 		propt(&op[incr]);
 		if (&op[2*incr] < &options[NOPTS]) {
-			tab(56);
+			ex_tab(56);
 			propt(&op[2 * incr]);
 		}
 		putNFL();

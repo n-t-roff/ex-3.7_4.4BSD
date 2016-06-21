@@ -405,7 +405,7 @@ vintr()
 
 	signal(SIGINT, vintr);
 	if (vcatch)
-		onintr();
+		onintr(0);
 	ungetkey(ATTN);
 	draino();
 	if (doingread) {

@@ -16,7 +16,6 @@ static char sccsid[] = "@(#)printf.c	8.1 (Berkeley) 6/9/93";
 static char *printf_id = "@(#) printf.c:2.2 6/5/79";
 #endif /* not lint */
 
-#include <stdarg.h>
 #include "ex.h"
  
 /*

@@ -655,7 +655,7 @@ insrt:
 			 * So we simulate an interrupt.
 			 */
 			if (inglobal)
-				onintr();
+				onintr(0);
 			/* fall into... */
 
 #ifdef notdef

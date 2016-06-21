@@ -600,7 +600,7 @@ suspend:
 				eol();
 				if (!c)
 					ckaw();
-				onsusp();
+				onsusp(0);
 				continue;
 #endif
 
@@ -865,7 +865,7 @@ numberit:
 					 * input which was a tty to suddenly be
 					 * turned into /dev/null.
 					 */
-					onhup();
+					onhup(0);
 				return;
 			}
 			if (addr2 != 0) {

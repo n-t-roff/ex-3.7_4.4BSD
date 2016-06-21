@@ -18,8 +18,8 @@ LIBEXECDIR=${PREFIX}/libexec
 #
 # Either none or both of the next two lines needs to be uncommented
 #
-#D_SBRK=	-DUNIX_SBRK
-#MALLOC_C=mapmalloc.c
+D_SBRK=	-DUNIX_SBRK
+MALLOC_C=mapmalloc.c
 #
 PROG=	ex
 SUBDIR=	ex3.7recover ex3.7preserve
@@ -27,7 +27,7 @@ DBG_CFLAGS=-Wall -Wextra \
 	-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls \
 	-fsanitize=undefined -fsanitize=integer
 	-fsanitize=address
-_CFLAGS=#${DBG_CFLAGS}
+_CFLAGS=${DBG_CFLAGS}
 _CPPFLAGS=-DTABS=8 -DLISPCODE -DCHDIR -DUCVISUAL -DVMUNIX -DFASTTAG -DUSG3TTY \
 	${D_SBRK} -DLIBEXECDIR='"${LIBEXECDIR}"'
 _LDFLAGS=-s

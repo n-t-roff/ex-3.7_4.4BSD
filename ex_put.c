@@ -11,7 +11,6 @@
 static char sccsid[] = "@(#)ex_put.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
-#include <stdarg.h>
 #include "ex.h"
 #include "ex_tty.h"
 #include "ex_vis.h"
@@ -41,9 +40,9 @@ static void ex_sTTY(int);
  * During open/visual, outchar and putchar will be set to
  * routines in the file ex_vput.c (vputchar, vinschar, etc.).
  */
-int	(*Outchar)() = termchar;
-int	(*Put_char)() = normchar;
-int	(*Pline)() = normline;
+void	(*Outchar)() = termchar;
+void	(*Put_char)() = normchar;
+void	(*Pline)() = normline;
 
 int (*
 setlist(bool t))()
@@ -438,7 +437,7 @@ fgoto(void)
  * Used by "set all".
  */
 void
-tab(int col)
+ex_tab(int col)
 {
 
 	flush1();
@@ -866,13 +865,13 @@ setoutt(void)
 void
 lprintf(char *fmt, ...)
 {
-	register int (*P)();
+	int (*P)();
 	va_list ap;
 
 	va_start(ap, fmt);
 	P = setlist(1);
 	ex_vprintf(fmt, ap);
-	Put_char = P;
+	Put_char = (void (*)())P;
 }
 
 /*

@@ -131,7 +131,6 @@ gettty()
 	register int c = 0;
 	register char *cp = genbuf;
 	char hadup = 0;
-	extern int (*Pline)();
 	int offset = Pline == numbline ? 8 : 0;
 	int ch;
 
@@ -148,14 +147,14 @@ gettty()
 			if (value(LISP))
 				lastin = lindent(dot + 1);
 #endif
-			tab(lastin + offset);
+			ex_tab(lastin + offset);
 			while ((c = getcd()) == CTRL('d')) {
 				if (lastin == 0 && isatty(0) == -1) {
 					holdcm = 0;
 					return (EOF);
 				}
 				lastin = backtab(lastin);
-				tab(lastin + offset);
+				ex_tab(lastin + offset);
 			}
 			switch (c) {
 
@@ -170,7 +169,7 @@ gettty()
 						ex_putchar(' ' | QUOTE);
 						ex_putchar('\b' | QUOTE);
 					}
-					tab(offset);
+					ex_tab(offset);
 					hadup = 1;
 					c = ex_getchar();
 				} else

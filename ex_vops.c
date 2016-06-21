@@ -187,7 +187,6 @@ vmacchng(bool fromvis)
 	char *savecursor;
 	char savelb[LBSIZE];
 	int nlines, more;
-	int copyw(), copywR();
 
 	if (!inopen)
 		return;
