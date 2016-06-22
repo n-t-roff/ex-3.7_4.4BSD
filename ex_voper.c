@@ -37,8 +37,8 @@ void
 operate(int c, int cnt)
 {
 	register int i;
-	int (*moveop)(), (*deleteop)();
-	register int (*opf)();
+	void (*moveop)(int), (*deleteop)(int);
+	void (*opf)(int);
 	bool subop = 0;
 	char *oglobp, *ocurs;
 	register line *addr;
@@ -46,7 +46,7 @@ operate(int c, int cnt)
 	static char lastFKND, lastFCHR;
 	short d;
 
-	moveop = vmove, deleteop = vdelete;
+	moveop = (void (*)(int))vmove, deleteop = vdelete;
 	wcursor = cursor;
 	wdot = NOLINE;
 	notecnt = 0;
@@ -58,7 +58,7 @@ operate(int c, int cnt)
 	 */
 	case 'd':
 		moveop = vdelete;
-		deleteop = beep;
+		deleteop = (void (*)(int))beep;
 		break;
 
 	/*
@@ -73,18 +73,18 @@ operate(int c, int cnt)
 	 * c		Change operator.
 	 */
 	case 'c':
-		if (c == 'c' && workcmd[0] == 'C' || workcmd[0] == 'S')
+		if ((c == 'c' && workcmd[0] == 'C') || workcmd[0] == 'S')
 			subop++;
 		moveop = vchange;
-		deleteop = beep;
+		deleteop = (void (*)(int))beep;
 		break;
 
 	/*
 	 * !		Filter through a UNIX command.
 	 */
 	case '!':
-		moveop = vfilter;
-		deleteop = beep;
+		moveop = (void (*)(int))vfilter;
+		deleteop = (void (*)(int))beep;
 		break;
 
 	/*
@@ -92,8 +92,8 @@ operate(int c, int cnt)
 	 *		can be put back with p/P.  Also yanks to named buffers.
 	 */
 	case 'y':
-		moveop = vyankit;
-		deleteop = beep;
+		moveop = (void (*)(int))vyankit;
+		deleteop = (void (*)(int))beep;
 		break;
 
 	/*
@@ -111,8 +111,8 @@ operate(int c, int cnt)
 	 */
 	case '<':
 	case '>':
-		moveop = vshftop;
-		deleteop = beep;
+		moveop = (void (*)(int))vshftop;
+		deleteop = (void (*)(int))beep;
 		break;
 
 	/*
@@ -167,7 +167,7 @@ nocount:
 	case 'W':
 	case 'w':
 		wdkind = c & ' ';
-		forbid(lfind(2, cnt, opf, (line *) 0) < 0);
+		forbid(lfind(2, cnt, (void (*)(void))opf, (line *) 0) < 0);
 		vmoving = 0;
 		break;
 
@@ -184,7 +184,7 @@ nocount:
 	case 'e':
 		wdkind = 1;
 ein:
-		forbid(lfind(3, cnt - 1, opf, (line *) 0) < 0);
+		forbid(lfind(3, cnt - 1, (void (*)(void))opf, (line *) 0) < 0);
 		vmoving = 0;
 		break;
 
@@ -199,7 +199,7 @@ ein:
 	 * )		Forward an s-expression.
 	 */
 	case ')':
-		forbid(lfind(0, cnt, opf, (line *) 0) < 0);
+		forbid(lfind(0, cnt, (void (*)(void))opf, (line *) 0) < 0);
 		markDOT();
 		break;
 
@@ -218,7 +218,7 @@ ein:
 	 *		set of {}'s.
 	 */
 	case '}':
-		forbid(lfind(1, cnt, opf, (line *) 0) < 0);
+		forbid(lfind(1, cnt, (void (*)(void))opf, (line *) 0) < 0);
 		markDOT();
 		break;
 
@@ -235,7 +235,7 @@ ein:
 #endif
 		getDOT();
 		forbid(!i);
-		if (opf != vmove)
+		if (opf != (void (*)(int))vmove)
 			if (dir > 0)
 				wcursor++;
 			else
@@ -265,7 +265,7 @@ ein:
 			forbid(getkey() != c);
 		forbid (Xhadcnt);
 		vsave();
-		i = lbrack(c, opf);
+		i = lbrack(c, (void (*)(void))opf);
 		getDOT();
 		forbid(!i);
 		markDOT();
@@ -340,7 +340,7 @@ ein:
 			wcursor--;
 		case 'f':
 fixup:
-			if (moveop != vmove)
+			if (moveop != (void (*)(int))vmove)
 				wcursor++;
 			break;
 		}
@@ -369,13 +369,13 @@ fixup:
 	 * $		To end of line.
 	 */
 	case '$':
-		if (opf == vmove) {
+		if (opf == (void (*)(int))vmove) {
 			vmoving = 1;
 			vmovcol = 20000;
 		} else
 			vmoving = 0;
 		if (cnt > 1) {
-			if (opf == vmove) {
+			if (opf == (void (*)(int))vmove) {
 				wcursor = 0;
 				cnt--;
 			} else
@@ -405,10 +405,10 @@ fixup:
 	 */
 	case 'l':
 	case ' ':
-		forbid (margin() || opf == vmove && edge());
+		forbid (margin() || opf == (void (*)(int))vmove && edge());
 		while (cnt > 0 && !margin())
 			wcursor += dir, cnt--;
-		if (margin() && opf == vmove || wcursor < linebuf)
+		if ((margin() && opf == (void (*)(int))vmove) || wcursor < linebuf)
 			wcursor -= dir;
 		vmoving = 0;
 		break;
@@ -445,7 +445,7 @@ deleteit:
 		 * Stuttered operators are equivalent to the operator on
 		 * a line, thus turn dd into d_.
 		 */
-		if (opf == vmove || c != workcmd[0]) {
+		if (opf == (void (*)(int))vmove || c != workcmd[0]) {
 errlab:
 			beep();
 			vmacp = 0;
@@ -470,7 +470,7 @@ errlab:
 	 */
 	case 'H':
 		wdot = (dot - vcline) + cnt - 1;
-		if (opf == vmove)
+		if (opf == (void (*)(int))vmove)
 			markit(wdot);
 		vmoving = 0;
 		wcursor = 0;
@@ -503,7 +503,7 @@ errlab:
 	 */
 	case 'L':
 		wdot = dot + vcnt - vcline - cnt;
-		if (opf == vmove)
+		if (opf == (void (*)(int))vmove)
 			markit(wdot);
 		vmoving = 0;
 		wcursor = 0;
@@ -514,7 +514,7 @@ errlab:
 	 */
 	case 'M':
 		wdot = dot + ((vcnt + 1) / 2) - vcline - 1;
-		if (opf == vmove)
+		if (opf == (void (*)(int))vmove)
 			markit(wdot);
 		vmoving = 0;
 		wcursor = 0;
@@ -581,7 +581,7 @@ errlab:
 		forbid (Xhadcnt);
 		vmoving = 0;
 		wcursor = d == '`' ? ncols[c - 'a'] : 0;
-		if (opf == vmove && (wdot != dot || (d == '`' && wcursor != cursor)))
+		if (opf == (void (*)(int))vmove && (wdot != dot || (d == '`' && wcursor != cursor)))
 			markDOT();
 		if (wcursor) {
 			vsave();
@@ -603,7 +603,7 @@ errlab:
 			cnt = lineDOL();
 		wdot = zero + cnt;
 		forbid (wdot < one || wdot > dol);
-		if (opf == vmove)
+		if (opf == (void (*)(int))vmove)
 			markit(wdot);
 		vmoving = 0;
 		wcursor = 0;
@@ -688,7 +688,7 @@ slerr:
 		wcursor = loc1;
 		if (i != 0)
 			vsetsiz(i);
-		if (opf == vmove) {
+		if (opf == (void (*)(int))vmove) {
 			if (state == ONEOPEN || state == HARDOPEN)
 				outline = destline = WBOT;
 			if (addr != dot || loc1 != cursor)
@@ -728,8 +728,8 @@ flusho();
 /*
  * Find single character c, in direction dir from cursor.
  */
-find(c)
-	char c;
+int
+find(int c)
 {
 
 	for(;;) {
@@ -766,7 +766,7 @@ word(void (*op)(void), int cnt)
 				break;
 		}
 		/* Unless last segment of a change skip blanks */
-		if (op != vchange || cnt > 1)
+		if (op != (void (*)(void))vchange || cnt > 1)
 			while (!margin() && blank())
 				wcursor++;
 		else
@@ -814,7 +814,7 @@ eend(void (*op)(void))
 		if (!lnext())
 			return;
 	}
-	if (op != vchange && op != vdelete && wcursor > linebuf)
+	if (op != (void (*)(void))vchange && op != (void (*)(void))vdelete && wcursor > linebuf)
 		wcursor--;
 }
 

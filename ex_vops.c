@@ -79,7 +79,7 @@ vundo(bool show)
 	register char *cp;
 	char temp[LBSIZE];
 	bool savenote;
-	int (*OO)();
+	void (*OO)();
 	short oldhold = hold;
 
 	switch (vundkind) {
@@ -107,12 +107,13 @@ vundo(bool show)
 		 * with dol through unddol-1.  Hack screen image to
 		 * reflect this replacement.
 		 */
-		if (show)
+		if (show) {
 			if (undkind == UNDMOVE)
 				vdirty(0, EX_LINES);
 			else
 				vreplace(undap1 - addr, undap2 - undap1,
 				    undkind == UNDPUT ? 0 : unddol - dol);
+		}
 		savenote = notecnt;
 		undo(1);
 		if (show && (vundkind != VMCHNG || addr != dot))
@@ -387,7 +388,7 @@ vdelete(int c)
 			vputchar('@');
 		}
 		wdot = dot;
-		vremote(i, ex_delete, 0);
+		vremote(i, (void (*)(int))ex_delete, 0);
 		notenam = "delete";
 		DEL[0] = 0;
 		killU();
@@ -507,7 +508,7 @@ vchange(int c)
 		 * case we are told to put.
 		 */
 		addr = dot;
-		vremote(cnt, ex_delete, 0);
+		vremote(cnt, (void (*)(int))ex_delete, 0);
 		setpk();
 		notenam = "delete";
 		if (c != 'd')
@@ -652,13 +653,15 @@ voOpen(int c, int cnt)
 	register int ind = 0, i;
 	short oldhold = hold;
 #ifdef	SIGWINCH
-	int oldmask;
+	sigset_t oldmask, newmask;
 #endif
 
-	if (value(SLOWOPEN) || value(REDRAW) && AL && DL)
+	if (value(SLOWOPEN) || (value(REDRAW) && AL && DL))
 		cnt = 1;
 #ifdef	SIGWINCH
-	oldmask = sigblock(sigmask(SIGWINCH));
+	sigemptyset(&newmask);
+	sigaddset(&newmask, SIGWINCH);
+	sigprocmask(SIG_BLOCK, &newmask, &oldmask);
 #endif
 	vsave();
 	setLAST();
@@ -708,7 +711,7 @@ voOpen(int c, int cnt)
 	linebuf[0] = 0;
 	vappend('o', 1, ind);
 #ifdef	SIGWINCH
-	(void)sigsetmask(oldmask);
+	sigprocmask(SIG_SETMASK, &oldmask, NULL);
 #endif
 }
 
@@ -729,7 +732,7 @@ vshftop(void)
 	if ((cnt = xdw()) < 0)
 		return;
 	addr = dot;
-	vremote(cnt, vshift, 0);
+	vremote(cnt, (void (*)(int))vshift, 0);
 	vshnam[0] = op;
 	notenam = vshnam;
 	dot = addr;

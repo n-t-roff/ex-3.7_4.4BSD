@@ -164,8 +164,10 @@ var	short	destline;
 var	ttymode	normf;		/* Restore tty flags to this (someday) */
 var	bool	normtty;	/* Have to restore normal mode from normf */
 
-ttymode ostart(void), setty(ttymode), unixex();
+ttymode ostart(void), setty(ttymode),
+	unixex(char *, char *, int, int);
 void	ostop(ttymode);
+void	unixwt(bool, ttymode);
 
 var	short	costCM;	/* # chars to output a typical CM, with padding etc. */
 var	short	costSR;	/* likewise for scroll reverse */

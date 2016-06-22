@@ -7,7 +7,7 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex_v.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -260,7 +260,8 @@ toopen:
  * empty buffer since routines internally
  * demand at least one line.
  */
-fixzero()
+void
+fixzero(void)
 {
 
 	if (dol == zero) {

@@ -38,7 +38,8 @@ vmain(void)
 	size_t addr;
 	int ind, nlput;
 	int shouldpo = 0;
-	int onumber, olist, (*OPline)(), (*OPutchar)();
+	int onumber, olist;
+	void (*OPline)(), (*OPutchar)();
 
 	vch_mac = VC_NOTINMAC;
 
@@ -1039,8 +1040,10 @@ fixup:
 			 * in open mode and . moved, then redraw.
 			 */
 			i = vcline + (dot - (fendcore + addr));
-			if (i < 0 || i >= vcnt && i >= -vcnt ||
-			    state != VISUAL && dot != fendcore + addr) {
+			if (i < 0
+			    || (vcnt >= 0 && i >= vcnt)
+			    || (vcnt < 0 && i >= -vcnt)
+			    || (state != VISUAL && dot != fendcore + addr)) {
 				if (state == CRTOPEN)
 					vup1();
 				if (vcnt > 0)
@@ -1142,7 +1145,7 @@ grabtag(void)
 		} while (isalpha(*cp) || isdigit(*cp) || *cp == '_'
 #ifdef LISPCODE
 			|| (value(LISP) && *cp == '-')
-#endif LISPCODE
+#endif
 			);
 		*dp++ = 0;
 	}
@@ -1192,7 +1195,7 @@ vsave(void)
 	char temp[LBSIZE];
 
 	CP(temp, linebuf);
-	if (FIXUNDO && vundkind == VCHNG || vundkind == VCAPU) {
+	if ((FIXUNDO && vundkind == VCHNG) || vundkind == VCAPU) {
 		/*
 		 * If the undo state is saved in the temporary buffer
 		 * vutmp, then we sync this into the temp file so that
@@ -1204,7 +1207,7 @@ vsave(void)
 		prepapp();
 		strcLIN(vutmp);
 		putmark(dot);
-		vremote(1, yank, 0);
+		vremote(1, (void (*)(int))yank, 0);
 		vundkind = VMCHNG;
 		notecnt = 0;
 		undkind = UNDCHANGE;

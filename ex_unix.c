@@ -7,7 +7,7 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex_unix.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -25,8 +25,8 @@ static char sccsid[] = "@(#)ex_unix.c	8.1 (Berkeley) 6/9/93";
  * First part of a shell escape,
  * parse the line, expanding # and % and ! and printing if implied.
  */
-unix0(warn)
-	bool warn;
+void
+unix0(bool warn)
 {
 	register char *up, *fp;
 	register short c;
@@ -135,9 +135,7 @@ uexp:
  * must have been setup already.
  */
 ttymode
-unixex(opt, up, newstdin, mode)
-	char *opt, *up;
-	int newstdin, mode;
+unixex(char *opt, char *up, int newstdin, int mode)
 {
 	int pvec[2];
 	ttymode f;
@@ -218,9 +216,8 @@ unixex(opt, up, newstdin, mode)
  * F is for restoration of tty mode if from open/visual.
  * C flags suppression of printing.
  */
-unixwt(c, f)
-	bool c;
-	ttymode f;
+void
+unixwt(bool c, ttymode f)
 {
 
 	waitfor();
@@ -245,8 +242,8 @@ unixwt(c, f)
  * the filter, then a child editor is created to write it.
  * If output is catch it from io which is created by unixex.
  */
-filter(mode)
-	register int mode;
+void
+filter(int mode)
 {
 	static int pvec[2];
 	ttymode f;	/* mjm: was register */
@@ -301,7 +298,8 @@ filter(mode)
  * Set up to do a recover, getting io to be a pipe from
  * the recover process.
  */
-recover()
+void
+recover(void)
 {
 	static int pvec[2];
 
@@ -331,7 +329,8 @@ recover()
 /*
  * Wait for the process (pid an external) to complete.
  */
-waitfor()
+void
+waitfor(void)
 {
 	pid_t wpid;
 
@@ -357,7 +356,8 @@ waitfor()
  * exits non-zero, force not edited; otherwise force
  * a write.
  */
-revocer()
+void
+revocer(void)
 {
 
 	waitfor();
