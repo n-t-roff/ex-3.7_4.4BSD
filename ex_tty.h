@@ -198,3 +198,4 @@ var	char	ttynbuf[20];	/* result of ttyname() */
 var	int	ttymesg;	/* original mode of users tty */
 
 void addmac(char *,char *,char *,struct maps *);
+int map(int,struct maps *);

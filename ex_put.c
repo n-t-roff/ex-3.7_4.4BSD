@@ -25,7 +25,7 @@ static char sccsid[] = "@(#)ex_put.c	8.1 (Berkeley) 6/9/93";
 static void flush2(void);
 static void slobber(int);
 static void normchar(int);
-static void plodput(int);
+static int plodput(int);
 static int plod(int);
 static void ttcharoff(void);
 static void normal(ttymode);
@@ -44,7 +44,7 @@ void	(*Outchar)() = termchar;
 void	(*Put_char)() = normchar;
 void	(*Pline)() = normline;
 
-int (*
+void (*
 setlist(bool t))()
 {
 	void (*P)();
@@ -55,7 +55,7 @@ setlist(bool t))()
 	return (P);
 }
 
-int (*
+void (*
 setnumb(bool t))()
 {
 	void (*P)();
@@ -93,7 +93,7 @@ listchar(int c)
 	default:
 		if (c & QUOTE)
 			break;
-		if (c < ' ' && c != '\n' || c == DELETE)
+		if ((c < ' ' && c != '\n') || c == DELETE)
 			outchar('^'), c = ctlof(c);
 		break;
 	}
@@ -127,9 +127,9 @@ normchar(int c)
 		default:
 			c &= TRIM;
 		}
-	else if (c < ' ' && (c != '\b' || !OS) && c != '\n' && c != '\t' || c == DELETE)
+	else if ((c < ' ' && (c != '\b' || !OS) && c != '\n' && c != '\t') || c == DELETE)
 		ex_putchar('^'), c = ctlof(c);
-	else if (UPPERCASE)
+	else if (UPPERCASE) {
 		if (isupper(c)) {
 			outchar('\\');
 			c = tolower(c);
@@ -142,6 +142,7 @@ normchar(int c)
 					break;
 				}
 		}
+	}
 	outchar(c);
 }
 
@@ -363,11 +364,12 @@ fgoto(void)
 		outcol %= COLUMNS;
 		if (AM == 0) {
 			while (l > 0) {
-				if (pfast)
+				if (pfast) {
 					if (xCR)
 						tputs(xCR, 0, putch);
 					else
 						putch('\r');
+				}
 				if (xNL)
 					tputs(xNL, 0, putch);
 				else
@@ -419,7 +421,7 @@ fgoto(void)
 				outcol = 0;
 		}
 	}
-	if (destline < outline && !(CA && !holdcm || UP != NOSTR))
+	if (destline < outline && !((CA && !holdcm) || UP != NOSTR))
 		destline = outline;
 	if (CA && !holdcm)
 		if (plod(costCM) > 0)
@@ -453,14 +455,15 @@ ex_tab(int col)
 
 static int plodcnt, plodflg;
 
-static void
+static int
 plodput(int c)
 {
 
-	if (plodflg)
+	if (plodflg) {
 		plodcnt--;
-	else
-		putch(c);
+		return c;
+	} else
+		return putch(c);
 }
 
 static int
@@ -568,7 +571,7 @@ plod(int cnt)
 	 * If it will be cheaper, or if we can't back up, then send
 	 * a return preliminarily.
 	 */
-	if (j > i + 1 || outcol > destcol && !BS && !BC) {
+	if (j > i + 1 || (outcol > destcol && !BS && !BC)) {
 		/*
 		 * BUG: this doesn't take the (possibly long) length
 		 * of xCR into account.
@@ -820,7 +823,7 @@ ex_putS(cp)
 }
 #endif
 
-void
+int
 putch(int c)
 {
 
@@ -828,9 +831,11 @@ putch(int c)
 	if(c == '\n')	/* mjm: Fake "\n\r" for '\n' til fix in 3B firmware */
 		putch('\r');	/* mjm: vi does "stty -icanon" => -onlcr !! */
 #endif
-	*obp++ = c & 0177;
+	c &= 0177;
+	*obp++ = c;
 	if (obp >= &obuf[sizeof obuf])
 		flusho();
+	return c;
 }
 
 /*
@@ -865,13 +870,13 @@ setoutt(void)
 void
 lprintf(char *fmt, ...)
 {
-	int (*P)();
+	void (*P)();
 	va_list ap;
 
 	va_start(ap, fmt);
 	P = setlist(1);
 	ex_vprintf(fmt, ap);
-	Put_char = (void (*)())P;
+	Put_char = P;
 }
 
 /*

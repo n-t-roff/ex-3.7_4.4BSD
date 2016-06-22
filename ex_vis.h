@@ -265,14 +265,14 @@ var	char	workcmd[5];	/* Temporary for lastcmd */
 /*
  * Function types
  */
-int	beep();
+void	beep(void);
 void	vchange(int);
 void	vdelete(int);
 int	vgrabit();
 void	vinschar(int);
 void	vmove(void);
 void	vputchar(int);
-int	vshift();
+void	vshift(void);
 void	vyankit(void);
 void	vmoveto(line *, char *, char);
 void	vjumpto(line *, char *, char);
@@ -305,3 +305,35 @@ void	vgotoCL(int);
 void	vprepins(void);
 void	goim(void);
 void	endim(void);
+void	bleep(int, char *);
+int	vdcMID(void);
+int	ateopr(void);
+void	back1(void);
+void	vdoappend(char *);
+void	ungetkey(int);
+int	getkey(void);
+int	peekbr(void);
+int	getesc(void);
+int	peekkey(void);
+int	readecho(int);
+void	setDEL(void);
+void	ex_setBUF(char *);
+int	noteit(bool);
+int	vgetcnt(void);
+int	lfind(bool, int, void (*)(void), line *);
+#ifdef LISPCODE
+int	lindent(line *);
+#endif
+int	lmatchp(line *);
+void	lsmatch(char *);
+int	lnext(void);
+int	lbrack(int, void (*)(void));
+int	isa(char *);
+int	word(void (*)(void), int);
+int	wordof(int, char *);
+int	wordch(char *);
+void	prepapp(void);
+void	vremote(int, void (*)(int), int);
+void	vundo(bool);
+void	vnoapp(void);
+void	voOpen(int, int);

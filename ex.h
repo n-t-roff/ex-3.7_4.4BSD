@@ -104,6 +104,8 @@ typedef	int	line;
 #endif
 typedef	short	bool;
 
+int tputs(const char *, int, int (*)(int));
+
 #include "ex_tune.h"
 #include "ex_vars.h"
 /*
@@ -369,10 +371,10 @@ extern	void	(*Outchar)();
 extern	void	(*Pline)();
 extern	void	(*Put_char)();
 sig_t	oldhup;
-int	(*setlist(bool))();
+void	(*setlist(bool))();
 int	(*setnorm())();
 int	(*setnorm())();
-int	(*setnumb(bool))();
+void	(*setnumb(bool))();
 line	*address();
 char	*cgoto();
 char	*genindent(int);
@@ -402,14 +404,14 @@ char	*vinit();
 char	*vpastwh(char *);
 char	*vskipwh(char *);
 void	put(void);
-int	putreg();
-int	YANKreg();
-int	ex_delete();
+void	putreg(int);
+void	YANKreg(int);
+void	ex_delete(bool);
 int	filter();
 int	getfile();
 int	getsub();
 int	gettty();
-int	join();
+void	join(int);
 void	listchar(int);
 off_t	lseek();
 void	normline(void);
@@ -418,16 +420,16 @@ var	void (*oldquit)();
 void	onhup(int);
 void	onintr(int);
 void	onsusp(int);
-void	putch(int);
-int	shift();
+int	putch(int);
+void	shift(int, int);
 void	termchar(int);
 void	vfilter(void);
 #ifdef CBREAK
-void	vintr();
+void	vintr(int);
 #endif
-void	vputch(int);
+int	vputch(int);
 void	vshftop(void);
-int	yank();
+void	yank(void);
 void	setall(void);
 void	setcount(void);
 void	commands(bool, bool);
@@ -490,7 +492,7 @@ void	vup(int, int, bool);
 void	ex_printf(char *, ...);
 void	ex_vprintf(char *, va_list);
 void	lprintf(char *, ...);
-void	eend(int (*)());
+void	eend(void (*)(void));
 void	wrerror(void);
 void	clrstats(void);
 void	ex_getline(line);
@@ -555,6 +557,26 @@ void	markit(line *);
 void	setrupt(void);
 int	preserve(void);
 void	ex_exit(int);
+int	append(int (*)(), line *);
+void	appendnone(void);
+void	pargs(void);
+void	deletenone(void);
+void	move(void);
+void	pragged(bool);
+void	zop(int);
+void	plines(line *, line *, bool);
+void	pofix(void);
+void	undo(bool);
+void	cmdmac(char);
+void	oop(void);
+void	winch(int);
+void	cleanup(bool);
+line	putline(void);
+void	tlaste(void);
+void	tflush(void);
+int	partreg(int);
+void	notpart(int);
+void	regbuf(int, char *, int);
 
 /*
  * C doesn't have a (void) cast, so we have to fake it for lint's sake.

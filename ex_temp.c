@@ -7,7 +7,7 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex_temp.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -30,7 +30,14 @@ static char sccsid[] = "@(#)ex_temp.c	8.1 (Berkeley) 6/9/93";
 #endif
 
 static void blkio(int, char *, ssize_t (*)());
+static void regio(int, ssize_t (*iofcn)());
 static void rbflush(void);
+static int REGblk(void);
+static void KILLreg(int);
+static size_t shread(void);
+static int getREG(void);
+static void kshift(void);
+static void YANKline(void);
 
 char	tfname[40];
 char	rfname[40];
@@ -114,8 +121,8 @@ vms_no_check_dir:
 #endif
 }
 
-cleanup(all)
-	bool all;
+void
+cleanup(bool all)
 {
 	if (all) {
 		putpad(TE);
@@ -152,7 +159,8 @@ ex_getline(line tl)
 		}
 }
 
-putline()
+line
+putline(void)
 {
 	register char *bp, *lp;
 	register int nl;
@@ -182,9 +190,7 @@ putline()
 }
 
 char *
-getblock(atl, iof)
-	line atl;
-	int iof;
+getblock(line atl, int iof)
 {
 	register int bno, off;
 #ifdef CRYPT
@@ -297,25 +303,27 @@ blkio(int b, char *buf, ssize_t (*iofcn)())
 	} else if (stilinc)
 		tflush();
 #endif
-	lseek(tfile, (long) (unsigned) b * BUFSIZ, 0);
+	lseek(tfile, b * BUFSIZ, 0);
 	if ((*iofcn)(tfile, buf, BUFSIZ) != BUFSIZ)
 		filioerr(tfname);
 }
 
 #ifdef VMUNIX
-tlaste()
+void
+tlaste(void)
 {
 
 	if (stilinc)
 		dirtcnt = 0;
 }
 
-tflush()
+void
+tflush(void)
 {
 	int i = stilinc;
 	
 	stilinc = 0;
-	lseek(tfile, (long) 0, 0);
+	lseek(tfile, 0, 0);
 	if (write(tfile, pagrnd(incorb[1]), i * BUFSIZ) != (i * BUFSIZ))
 		filioerr(tfname);
 }
@@ -438,9 +446,8 @@ short	rblock;
 short	rnext;
 char	*rbufcp;
 
-regio(b, iofcn)
-	short b;
-	int (*iofcn)();
+static void
+regio(int b, ssize_t (*iofcn)())
 {
 
 	if (rfile == -1) {
@@ -462,7 +469,8 @@ oops:
 	rblock = b;
 }
 
-REGblk()
+static int
+REGblk(void)
 {
 	register int i, j, m;
 
@@ -483,11 +491,11 @@ REGblk()
 	}
 	error("Out of register space (ugh)");
 	/*NOTREACHED*/
+	return 0;
 }
 
-struct	strreg *
-mapreg(c)
-	register int c;
+static struct strreg *
+mapreg(int c)
 {
 
 	if (isupper(c))
@@ -495,10 +503,8 @@ mapreg(c)
 	return (isdigit(c) ? &strregs[('z'-'a'+1)+(c-'0')] : &strregs[c-'a']);
 }
 
-int	shread();
-
-KILLreg(c)
-	register int c;
+static void
+KILLreg(int c)
 {
 	register struct strreg *sp;
 
@@ -518,7 +524,8 @@ KILLreg(c)
 }
 
 /*VARARGS*/
-shread()
+static size_t
+shread(void)
 {
 	struct front { short a; short b; };
 
@@ -527,8 +534,7 @@ shread()
 	return (0);
 }
 
-int	getREG();
-
+void
 putreg(int c)
 {
 	register line *odot = dot;
@@ -569,21 +575,23 @@ putreg(int c)
 	notecnt = cnt;
 }
 
+int
 partreg(int c)
 {
 
 	return (mapreg(c)->rg_flags);
 }
 
-notpart(c)
-	register int c;
+void
+notpart(int c)
 {
 
 	if (c)
 		mapreg(c)->rg_flags = 0;
 }
 
-getREG()
+static int
+getREG(void)
 {
 	register char *lp = linebuf;
 	register int c;
@@ -609,8 +617,8 @@ getREG()
 	}
 }
 
-YANKreg(c)
-	register int c;
+void
+YANKreg(int c)
 {
 	register line *addr;
 	register struct strreg *sp;
@@ -647,7 +655,8 @@ YANKreg(c)
 	CP(linebuf,savelb);
 }
 
-kshift()
+static void
+kshift(void)
 {
 	register int i;
 
@@ -656,7 +665,8 @@ kshift()
 		copy(mapreg(i+1), mapreg(i), sizeof (struct strreg));
 }
 
-YANKline()
+static void
+YANKline(void)
 {
 	register char *lp = linebuf;
 	register struct rbuf *rp = rbuf;
@@ -697,6 +707,7 @@ rbflush(void)
 }
 
 /* Register c to char buffer buf of size buflen */
+void
 regbuf(int c, char *buf, int buflen)
 {
 	register char *p, *lp;

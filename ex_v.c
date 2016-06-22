@@ -59,7 +59,9 @@ static char sccsid[] = "@(#)ex_v.c	8.1 (Berkeley) 6/9/93";
  */
 
 jmp_buf venv;
-void	winch();
+static void ovend(ttymode);
+static void vok(char *);
+static void ovbeg(void);
 
 /*
  * Enter open mode
@@ -67,11 +69,12 @@ void	winch();
 #ifdef u370
 char	atube[TUBESIZE+LBSIZE];
 #endif
-oop()
+void
+oop(void)
 {
 	register char *ic;
 #ifndef u370
-	char atube[TUBESIZE + LBSIZE];
+	static char atube[TUBESIZE + LBSIZE];
 #endif
 	ttymode f;	/* mjm: was register */
 
@@ -145,7 +148,8 @@ oop()
 #endif
 }
 
-ovbeg()
+static void
+ovbeg(void)
 {
 
 	if (!value(OPEN))
@@ -159,8 +163,8 @@ ovbeg()
 	dot = addr2;
 }
 
-ovend(f)
-	ttymode f;
+static void
+ovend(ttymode f)
 {
 
 	splitw++;
@@ -186,7 +190,7 @@ vop(void)
 {
 	register int c;
 #ifndef u370
-	char atube[TUBESIZE + LBSIZE];
+	static char atube[TUBESIZE + LBSIZE];
 #endif
 	ttymode f;	/* mjm: was register */
 
@@ -358,8 +362,8 @@ setwind()
  * If so, then divide the screen buffer up into lines,
  * and initialize a bunch of state variables before we start.
  */
-vok(atube)
-	register char *atube;
+static void
+vok(char *atube)
 {
 	register int i;
 
@@ -398,11 +402,12 @@ vok(atube)
 
 #ifdef CBREAK
 void
-vintr()
+vintr(int i)
 {
 	extern jmp_buf readbuf;
 	extern int doingread;
 
+	(void)i;
 	signal(SIGINT, vintr);
 	if (vcatch)
 		onintr(0);
@@ -437,8 +442,9 @@ vsetsiz(int size)
 
 #ifdef	SIGWINCH
 void
-winch()
+winch(int i)
 {
+	(void)i;
 	vsave();
 	ignore(setty(normf));
 	longjmp(venv, 1);

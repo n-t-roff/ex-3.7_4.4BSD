@@ -7,7 +7,7 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex_vput.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -95,7 +95,7 @@ vclreol(void)
 	i = WCOLS - destcol;
 	tp = vtube[destline] + destcol;
 	if (CE) {
-		if (IN && *tp || !ateopr()) {
+		if ((IN && *tp) || !ateopr()) {
 			vcsync();
 			vputp(CE, 1);
 		}
@@ -742,7 +742,7 @@ vnpins(int dosync)
 		e = vglitchup(vcline, d);
 		vigoto(e, 0); vclreol();
 		if (dosync) {
-			int (*Ooutchar)() = Outchar;
+			void (*Ooutchar)() = Outchar;
 			Outchar = vputchar;
 			vsync(e + 1);
 			Outchar = Ooutchar;
@@ -866,7 +866,7 @@ viin(int c)
 	short oldhold = hold;
 
 	hold |= HOLDPUPD;
-	if (tabsize && (IM && EI) && inssiz - doomed > tabslack)
+	if (tabsize && (IM && EI) && inssiz - doomed > tabslack) {
 		/*
 		 * There is a tab out there which will be affected
 		 * by the insertion since there aren't enough doomed
@@ -905,6 +905,7 @@ viin(int c)
 				enddm();
 			}
 		}
+	}
 
 	/* 
 	 * Now put out the characters of the actual insertion.
@@ -1191,7 +1192,7 @@ def:
 		 * that we have overstruct something.
 		 */
 		if (!insmode && d && d != ' ' && d != (c & TRIM)) {
-			if (EO && (OS || UL && (c == '_' || d == '_'))) {
+			if (EO && (OS || (UL && (c == '_' || d == '_')))) {
 				vputc(' ');
 				outcol++, destcol++;
 				back1();
@@ -1317,7 +1318,7 @@ physdc(int stcol, int endcol)
 	if (IN) {
 		up = vtube0 + stcol;
 		tp = vtube0 + endcol;
-		while (i = *tp++) {
+		while ((i = *tp++)) {
 			if ((i & (QUOTE|TRIM)) == QUOTE)
 				break;
 			*up++ = i;
@@ -1381,7 +1382,7 @@ tracec(c)
 /*
  * Put a character with possible tracing.
  */
-void
+int
 vputch(int c)
 {
 
@@ -1389,5 +1390,5 @@ vputch(int c)
 	if (trace)
 		tracec(c);
 #endif
-	vputc(c);
+	return vputc(c);
 }

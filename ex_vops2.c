@@ -7,7 +7,7 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex_vops2.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -23,13 +23,15 @@ static char sccsid[] = "@(#)ex_vops2.c	8.1 (Berkeley) 6/9/93";
 extern char	*vUA1, *vUA2;		/* mjm: extern; also in ex_vops.c */
 extern char	*vUD1, *vUD2;		/* mjm: extern; also in ex_vops.c */
 
+static int vgetsplit(void);
+static int vmaxrep(int, int);
+
 /*
  * Obleeperate characters in hardcopy
  * open with \'s.
  */
-bleep(i, cp)
-	register int i;
-	char *cp;
+void
+bleep(int i, char *cp)
 {
 
 	i -= column(cp);
@@ -43,7 +45,8 @@ bleep(i, cp)
  * Common code for middle part of delete
  * and change operating on parts of lines.
  */
-vdcMID()
+int
+vdcMID(void)
 {
 	register char *cp;
 
@@ -87,7 +90,8 @@ takeout(char *BUF)
  * Are we at the end of the printed representation of the
  * line?  Used internally in hardcopy open.
  */
-ateopr()
+int
+ateopr(void)
 {
 	register int i, c;
 	register char *cp = vtube[destline] + destcol;
@@ -123,7 +127,7 @@ vappend(int ch, int cnt, int indent)
 	int repcnt, savedoomed;
 	short oldhold = hold;
 #ifdef	SIGWINCH
-	int oldmask;
+	sigset_t oldmask, newmask;
 #endif
 
 	/*
@@ -215,7 +219,9 @@ vappend(int ch, int cnt, int indent)
 	gobblebl = 0;
 
 #ifdef	SIGWINCH
-	oldmask = sigblock(sigmask(SIGWINCH));
+	sigemptyset(&newmask);
+	sigaddset(&newmask, SIGWINCH);
+	sigprocmask(SIG_BLOCK, &newmask, &oldmask);
 #endif
 	/*
 	 * Text gathering loop.
@@ -352,7 +358,7 @@ vappend(int ch, int cnt, int indent)
 		 * correctly later.
 		 */
 		if (FIXUNDO && vundkind == VCHNG) {
-			vremote(1, yank, 0);
+			vremote(1, (void (*)(int))yank, 0);
 			undap1--;
 		}
 
@@ -395,7 +401,7 @@ vappend(int ch, int cnt, int indent)
 	wcursor = cursor;
 	vmove();
 #ifdef	SIGWINCH
-	(void)sigsetmask(oldmask);
+	sigprocmask(SIG_SETMASK, &oldmask, NULL);
 #endif
 }
 
@@ -404,7 +410,8 @@ vappend(int ch, int cnt, int indent)
  * backwards around end of lines (vgoto can't hack columns which are
  * less than 0 in general).
  */
-back1()
+void
+back1(void)
 {
 
 	vgoto(destline - 1, WCOLS + destcol - 1);
@@ -433,7 +440,7 @@ vgetline(int cnt, char *gcursor, bool *aescaped, int commch)
 	int x, y, iwhite, backsl=0;
 	char *iglobp;
 	char cstr[2];
-	int (*OO)() = Outchar;
+	void (*OO)() = Outchar;
 
 	/*
 	 * Clear the output state and counters
@@ -638,7 +645,7 @@ vbackup:
 			}
 			if (value(WRAPMARGIN) &&
 				(outcol >= OCOLUMNS - value(WRAPMARGIN) ||
-				 backsl && outcol==0) &&
+				 (backsl && outcol==0)) &&
 				commch != 'r') {
 				/*
 				 * At end of word and hit wrapmargin.
@@ -782,7 +789,7 @@ vbackup:
 			 * generated autoindent.  We count the ^D for repeat
 			 * purposes.
 			 */
-			if (c == iwhite && c != 0)
+			if (c == iwhite && c != 0) {
 				if (cp == gcursor) {
 					iwhite = backtab(c);
 					CDCNT++;
@@ -806,6 +813,7 @@ vbackup:
 					vputchar(' ');
 					goto vbackup;
 				}
+			}
 			if (vglobp && vglobp - iglobp >= 2 &&
 			    (vglobp[-2] == '^' || vglobp[-2] == '0')
 			    && gcursor == ogcursor + 1)
@@ -843,15 +851,14 @@ vadone:
 	return (gcursor);
 }
 
-int	vgetsplit();
 char	*vsplitpt;
 
 /*
  * Append the line in buffer at lp
  * to the buffer after dot.
  */
-vdoappend(lp)
-	char *lp;
+void
+vdoappend(char *lp)
 {
 	register int oing = inglobal;
 
@@ -864,7 +871,8 @@ vdoappend(lp)
 /*
  * Subroutine for vdoappend to pass to append.
  */
-vgetsplit()
+static int
+vgetsplit(void)
 {
 
 	if (vsplitpt == 0)
@@ -879,6 +887,7 @@ vgetsplit()
  * allowed that will yield total line length less than
  * LBSIZE characters and also does hacks for the R command.
  */
+static int
 vmaxrep(int ch, int cnt)
 {
 	register int len, replen;

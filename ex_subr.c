@@ -159,7 +159,7 @@ genindent(int indent)
 {
 	register char *cp;
 
-	for (cp = genbuf; indent >= value(TABSTOP); indent -= value(TABSTOP))
+	for (cp = genbuf; indent > 0 && indent >= value(TABSTOP); indent -= value(TABSTOP))
 		*cp++ = '\t';
 	for (; indent > 0; indent--)
 		*cp++ = ' ';
@@ -946,7 +946,7 @@ onsusp(int i)
 		if (ioctl(0, TIOCGWINSZ, &win) >= 0)
 			if (win.ws_row != winsz.ws_row ||
 			    win.ws_col != winsz.ws_col)
-				winch();
+				winch(0);
 #endif
 		if (vcnt < 0) {
 			vcnt = -vcnt;

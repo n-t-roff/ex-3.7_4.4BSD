@@ -30,7 +30,7 @@ DBG_CFLAGS=-Wall -Wextra \
 _CFLAGS=${DBG_CFLAGS}
 _CPPFLAGS=-DTABS=8 -DLISPCODE -DCHDIR -DUCVISUAL -DVMUNIX -DFASTTAG -DUSG3TTY \
 	${D_SBRK} -DLIBEXECDIR='"${LIBEXECDIR}"'
-_LDFLAGS=-s
+_LDFLAGS=#-s
 SRCS=	ex.c ex_addr.c ex_cmds.c ex_cmds2.c ex_cmdsub.c ex_data.c ex_extern.c \
 	ex_get.c ex_io.c ex_put.c ex_re.c ex_set.c ex_subr.c ex_tagio.c \
 	ex_temp.c ex_tty.c ex_unix.c ex_v.c ex_vadj.c ex_vget.c ex_vmain.c \

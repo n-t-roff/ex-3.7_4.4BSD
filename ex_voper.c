@@ -7,7 +7,7 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex_voper.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -17,6 +17,9 @@ static char sccsid[] = "@(#)ex_voper.c	8.1 (Berkeley) 6/9/93";
 
 #define	blank()		isspace(wcursor[0])
 #define	forbid(a)	if (a) goto errlab;
+
+static int edge(void);
+static int margin(void);
 
 char	vscandir[2] =	{ '/', 0 };
 
@@ -742,9 +745,8 @@ find(c)
  * Do a word motion with operator op, and cnt more words
  * to go after this.
  */
-word(op, cnt)
-	register int (*op)();
-	int cnt;
+int
+word(void (*op)(void), int cnt)
 {
 	register int which;
 	register char *iwc;
@@ -794,7 +796,7 @@ word(op, cnt)
  * remaining after this.
  */
 void
-eend(int (*op)())
+eend(void (*op)(void))
 {
 	register int which;
 
@@ -820,9 +822,8 @@ eend(int (*op)())
  * Wordof tells whether the character at *wc is in a word of
  * kind which (blank/nonblank words are 0, conservative words 1).
  */
-wordof(which, wc)
-	char which;
-	register char *wc;
+int
+wordof(int which, char *wc)
 {
 
 	if (isspace(*wc))
@@ -834,8 +835,8 @@ wordof(which, wc)
  * Wordch tells whether character at *wc is a word character
  * i.e. an alfa, digit, or underscore.
  */
-wordch(wc)
-	char *wc;
+int
+wordch(char *wc)
 {
 	register int c;
 
@@ -846,7 +847,8 @@ wordch(wc)
 /*
  * Edge tells when we hit the last character in the current line.
  */
-edge()
+static int
+edge(void)
 {
 
 	if (linebuf[0] == 0)
@@ -860,7 +862,8 @@ edge()
 /*
  * Margin tells us when we have fallen off the end of the line.
  */
-margin()
+static int
+margin(void)
 {
 
 	return (wcursor < linebuf || wcursor[0] == 0);
