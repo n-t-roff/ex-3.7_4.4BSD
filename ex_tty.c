@@ -24,6 +24,7 @@ static char sccsid[] = "@(#)ex_tty.c	8.1 (Berkeley) 6/9/93";
 static void zap(void);
 static int cost(char *);
 static int countnum(int);
+static char *longname(char *, char *);
 
 void
 gettmode(void)
@@ -221,10 +222,8 @@ zap(void)
 	} while (*namp);
 }
 
-char *
-longname(bp, def)
-	register char *bp;
-	char *def;
+static char *
+longname(char *bp, char *def)
 {
 	register char *cp;
 

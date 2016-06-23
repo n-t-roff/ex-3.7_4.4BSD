@@ -139,7 +139,7 @@ main(int argc, char **argv)
 	/*
 	 * Allocate space for the line pointers from the temp file.
 	 */
-	if ((int) sbrk((int) (H.Flines * sizeof (line))) == -1)
+	if (sbrk(H.Flines * sizeof(line)) == (void *)-1)
 		/*
 		 * Good grief.
 		 */

@@ -7,7 +7,7 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex_cmdsub.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -235,7 +235,7 @@ join(int c)
 				}
 			}
 		}
-		while (*cp++ = *cp1++)
+		while ((*cp++ = *cp1++))
 			if (cp > &genbuf[LBSIZE-2])
 				error("Line overflow|Result line of join would be too long");
 		cp--;
@@ -565,10 +565,10 @@ badtag:
 			tseek(iof, mid);
 			if (mid > 0)	/* to get first tag in file to work */
 				/* scan to next \n */
-				if(tgets(linebuf, sizeof linebuf, iof)==NULL)
+				if(tgets(linebuf, sizeof linebuf, iof)==0)
 					goto goleft;
 			/* get the line itself */
-			if(tgets(linebuf, sizeof linebuf, iof)==NULL)
+			if(tgets(linebuf, sizeof linebuf, iof)==0)
 				goto goleft;
 #ifdef TDEBUG
 			ex_printf("tag: %o %o %o %s\n", bot, mid, top, linebuf);
@@ -1201,7 +1201,7 @@ addmac(char *src,char *dest,char *dname,struct maps *mp)
 		 * linefeed, and escape, he can screw himself. This is
 		 * so weird I don't bother to check for it.
 		 */
-		if (isalpha(src[0]) && src[1] || any(src[0],":"))
+		if ((isalpha(src[0]) && src[1]) || any(src[0],":"))
 			error("Too dangerous to map that");
 	}
 	else if (dest) {

@@ -31,7 +31,7 @@ static void grabtag(void);
 void
 vmain(void)
 {
-	register int c, cnt, i;
+	int c, cnt, i;
 	char esave[TUBECOLS];
 	char *oglobp;
 	short d;
@@ -127,7 +127,7 @@ looptop:
 			 * an 'empty' named buffer spec in the routine
 			 * kshift (see ex_temp.c).
 			 */
-			forbid (c == '0' || !isalpha(c) && !isdigit(c));
+			forbid (c == '0' || (!isalpha(c) && !isdigit(c)));
 			vreg = c;
 		}
 reread:

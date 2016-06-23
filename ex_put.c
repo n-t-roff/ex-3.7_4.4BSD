@@ -62,7 +62,7 @@ setnumb(bool t))()
 
 	numberf = t;
 	P = Pline;
-	Pline = t ? numbline : normline;
+	Pline = t ? (void (*)())numbline : normline;
 	return (P);
 }
 

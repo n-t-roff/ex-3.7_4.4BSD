@@ -258,7 +258,7 @@ format:		(void)fprintf(stderr, "ex3.7preserve: %s\n",
 		(void)unlink(fname);
 	else {
 		(void)fchown(ofd, H.Uid, 0);
-		notify(H.Uid, H.Savedfile, (int)name, H.Time);
+		notify(H.Uid, H.Savedfile, name ? 1 : 0, H.Time);
 		if (name)
 			(void)unlink(name);
 	}

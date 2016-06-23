@@ -7,7 +7,7 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex_cmds.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -16,6 +16,7 @@ static char sccsid[] = "@(#)ex_cmds.c	8.1 (Berkeley) 6/9/93";
 #include "ex_temp.h"
 #include "ex_tty.h"
 #include "ex_vis.h"
+#include "ex_re.h"
 
 bool	pflag, nflag;
 int	poffset;
@@ -59,7 +60,8 @@ commands(bool noprompt, bool exitoneof)
 		 * before the next command.
 		 */
 		if (pflag ||
-		    lchng != chng && value(AUTOPRINT) && !inglobal && !inopen && endline) {
+		    (lchng != chng && value(AUTOPRINT) && !inglobal
+		    && !inopen && endline)) {
 			pflag = 0;
 			nochng();
 			if (dol != zero) {
@@ -96,7 +98,7 @@ error("Offset out-of-bounds|Offset after command too large");
 			addr1 = addr2;
 			addr = address((char *) 0);
 			c = getcd();
-			if (addr == 0)
+			if (addr == 0) {
 				if (c == ',')
 					addr = dot;
 				else if (addr1 != 0) {
@@ -104,6 +106,7 @@ error("Offset out-of-bounds|Offset after command too large");
 					break;
 				} else
 					break;
+			}
 			addr2 = addr;
 			given++;
 			if (c == ';') {
@@ -674,7 +677,7 @@ suspend:
 				setNAEOL();
 				ex_printf("@(#) Version 3.7, 6/7/85"
 				    " (4.4BSD).  git "
-				    "160602 1916"
+				    "160623 21:34"
 				    + 5);
 				noonl();
 				continue;

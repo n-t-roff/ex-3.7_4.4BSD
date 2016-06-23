@@ -278,7 +278,7 @@ var	long	bsize;		/* Block size for disk i/o */
 #define FIXUNDO		(inopen >= 0 && (inopen || !inglobal))
 #define ckaw()		{if (chng && value(AUTOWRITE)) wop(0);}
 #define	copy(a,b,c)	Copy((char *) a, (char *) b, c)
-#define	eq(a, b)	((a) && (b) && strcmp(a, b) == 0)
+#define	eq(a, b)	((a) != NULL && (b) != NULL && strcmp(a, b) == 0)
 #define	getexit(a)	copy(a, resetlab, sizeof (jmp_buf))
 #define	lastchar()	lastc
 #define	outchar(c)	(*Outchar)(c)
@@ -383,27 +383,20 @@ int	(*setnorm())();
 int	(*setnorm())();
 void	(*setnumb(bool))();
 line	*address(char *);
-char	*cgoto();
 char	*genindent(int);
 char	*getblock(line, int);
-char	*getenv();
 #ifdef	vms
 char	*getlog();
 #endif
 line	*getmark(int);
-char	*longname();
 char	*mesg(char *);
 char	*place(char *, char *, char *);
 char	*plural(long);
-line	*scanfor();
-line	*setin(line *);
+void	setin(line *);
 char	*strend(char *);
-char	*tailpath();
-char	*ttyname();
 line	*vback(line *, int);
 char	*vfindcol(int);
-char	*vgetline();
-char	*vinit();
+char	*vgetline(int, char *, bool *, int);
 char	*vpastwh(char *);
 char	*vskipwh(char *);
 void	put(void);
@@ -620,6 +613,7 @@ int	topen(char *, char *);
 int	tseek(int, long);
 int	tgets(char *, int, int);
 void	tclose(int);
+void	init(void);
 
 /*
  * C doesn't have a (void) cast, so we have to fake it for lint's sake.

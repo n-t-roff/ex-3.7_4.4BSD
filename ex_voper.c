@@ -405,7 +405,7 @@ fixup:
 	 */
 	case 'l':
 	case ' ':
-		forbid (margin() || opf == (void (*)(int))vmove && edge());
+		forbid (margin() || (opf == (void (*)(int))vmove && edge()));
 		while (cnt > 0 && !margin())
 			wcursor += dir, cnt--;
 		if ((margin() && opf == (void (*)(int))vmove) || wcursor < linebuf)

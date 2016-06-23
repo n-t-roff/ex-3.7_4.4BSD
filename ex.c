@@ -7,13 +7,13 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char copyright[] =
 "@(#) Copyright (c) 1980, 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
 #endif /* not lint */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -21,6 +21,9 @@ static char sccsid[] = "@(#)ex.c	8.1 (Berkeley) 6/9/93";
 #include "ex_argv.h"
 #include "ex_temp.h"
 #include "ex_tty.h"
+
+static char *tailpath(char *);
+static int iownit(char *);
 
 #ifdef TRACE
 #ifdef	vms
@@ -89,9 +92,8 @@ char	tttrace[]	= { '/','d','e','v','/','t','t','y','x','x',0 };
  * there is a 'd' in our name.  For edit we just diddle options;
  * for vi we actually force an early visual command.
  */
-main(ac, av)
-	register int ac;
-	register char *av[];
+int
+main(int ac, char **av)
 {
 #ifdef EXSTRINGS
 	char *erpath = EXSTRINGS;
@@ -298,7 +300,7 @@ main(ac, av)
 		if (ac == 0) {
 			ppid = 0;
 			setrupt();
-			execl(_PATH_EXRECOVER, "exrecover", "-r", 0);
+			execl(_PATH_EXRECOVER, "exrecover", "-r", NULL);
 			filioerr(_PATH_EXRECOVER);
 			ex_exit(1);
 		}
@@ -323,9 +325,9 @@ main(ac, av)
 		intty = isatty(0);
 		value(PROMPT) = intty;
 #ifndef	vms
-		if (cp = getenv("SHELL"))
+		if ((cp = getenv("SHELL")))
 #else
-		if (cp = getlog("SHELL"))
+		if ((cp = getlog("SHELL")))
 #endif
 			CP(shell, cp);
 		if (fast || !intty)
@@ -459,6 +461,7 @@ main(ac, av)
 	commands(0, 0);
 	cleanup(1);
 	ex_exit(0);
+	return 0; /* unreached */
 }
 
 /*
@@ -466,7 +469,8 @@ main(ac, av)
  * Main thing here is to get a new buffer (in fileinit),
  * rest is peripheral state resetting.
  */
-init()
+void
+init(void)
 {
 	register int i;
 
@@ -490,9 +494,8 @@ init()
 /*
  * Return last component of unix path name p.
  */
-char *
-tailpath(p)
-register char *p;
+static char *
+tailpath(char *p)
 {
 	register char *r;
 
@@ -506,8 +509,8 @@ register char *p;
  * Check ownership of file.  Return nonzero if it exists and is owned by the
  * user or the option sourceany is used
  */
-iownit(file)
-char *file;
+static int
+iownit(char *file)
 {
 	struct stat sb;
 

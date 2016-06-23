@@ -56,7 +56,7 @@ static int iostats(void);
  */
 int	io_savedfile, io_altfile, io_curr ;
 int	lock_savedfile, lock_altfile, lock_curr ;
-#endif	FLOCKFILE
+#endif
 
 /*
  * Parse file name for command encoded by comm.
@@ -72,7 +72,7 @@ filename(int comm)
 	int lock ;
 
 	lock = 0 ;
-#endif	FLOCKFILE
+#endif
 
 	d = ex_getchar();
 	if (endcmd(d)) {
@@ -83,7 +83,7 @@ filename(int comm)
 		if (io_curr && io_curr != io_savedfile) close(io_curr) ;
 		lock = lock_curr = lock_savedfile ;
 		io_curr = io_savedfile ;
-#endif	FLOCKFILE
+#endif
 		wasalt = (isalt > 0) ? isalt-1 : 0;
 		isalt = 0;
 		oldadot = altdot;
@@ -111,7 +111,7 @@ filename(int comm)
 			if (savedfile[0]) {
 #ifdef	FLOCKFILE
 				if (strcmp(file,savedfile) == 0) break ;
-#endif	FLOCKFILE
+#endif
 				altdot = lineDOT();
 				CP(altfile, savedfile);
 #ifdef	FLOCKFILE
@@ -119,14 +119,14 @@ filename(int comm)
 				io_altfile = io_savedfile ;
 				lock_altfile = lock_savedfile ;
 				io_savedfile = 0 ;
-#endif	FLOCKFILE
+#endif
 			}
 			CP(savedfile, file);
 #ifdef	FLOCKFILE
 			io_savedfile = io_curr ;
 			lock_savedfile = lock_curr ;
 			io_curr = 0 ;		lock = lock_curr = 0 ;
-#endif	FLOCKFILE
+#endif
 			break;
 
 		default:
@@ -143,12 +143,12 @@ filename(int comm)
 				io_altfile = io_curr ;
 				lock_altfile = lock_curr ;
 				io_curr = 0 ;		lock = lock_curr = 0 ;
-#endif	FLOCKFILE
+#endif
 			}
 			break;
 		}
 	}
-	if (hush && comm != 'f' || comm == 'E')
+	if ((hush && comm != 'f') || comm == 'E')
 		return;
 	if (file[0] != 0) {
 		lprintf("\"%s\"", file);
@@ -164,7 +164,7 @@ filename(int comm)
 				ex_printf(" [Shared lock]") ;
 			else if (lock == LOCK_EX)
 				ex_printf(" [Exclusive lock]") ;
-#endif	FLOCKFILE
+#endif
 		}
 		flush();
 	} else
@@ -258,9 +258,9 @@ void
 glob(struct glob *gp)
 {
 	int pvec[2];
-	register char **argv = gp->argv;
-	register char *cp = gp->argspac;
-	register int c;
+	char **argv = gp->argv;
+	char *cp = gp->argspac;
+	int c;
 	char ch;
 	int nleft = NCARGS;
 
@@ -293,7 +293,7 @@ glob(struct glob *gp)
 	if (pid == 0) {
 		int oerrno;
 
-		if (genbuf) {
+		/*if (genbuf)*/ {
 			register char *ccp = genbuf;
 			while (*ccp)
 				*ccp++ &= TRIM;
@@ -303,7 +303,7 @@ glob(struct glob *gp)
 		close(pvec[0]);
 		close(2);	/* so errors don't mess up the screen */
 		ignore(open(_PATH_DEVNULL, 1));
-		execl(svalue(SHELL), "sh", "-c", genbuf, 0);
+		execl(svalue(SHELL), "sh", "-c", genbuf, NULL);
 		oerrno = errno;
 		close(1);
 		dup(2);
@@ -391,7 +391,7 @@ rop(int c)
 	static int denied;	/* 1 if READONLY was set due to file permissions */
 #ifdef	FLOCKFILE
 	int *lp, *iop;
-#endif	FLOCKFILE
+#endif
 
 	io = open(file, 0);
 	if (io < 0) {
@@ -547,7 +547,7 @@ rop(int c)
 		} else *lp = LOCK_EX ;
 	}
 fail_lock:
-#endif	FLOCKFILE
+#endif
 	if (c == 'r')
 		setdot();
 	else
@@ -652,7 +652,7 @@ wop(bool dofname)
 	struct stat stbuf;
 #ifdef	FLOCKFILE
 	int *lp, *iop ;
-#endif	FLOCKFILE
+#endif
 
 	c = 0;
 	exclam = 0;
@@ -696,7 +696,7 @@ wop(bool dofname)
 		*lp = 0 ;
 		if ((*iop = open(file, 1)) < 0) *iop = 0 ;
 	}
-#endif	FLOCKFILE
+#endif
 	switch (c) {
 
 	case 0:
@@ -744,7 +744,7 @@ cre:
 	error (" File being modified by another process - use \"w!\" to write");
 		 else *lp = LOCK_EX ;
 	}
-#endif	FLOCKFILE
+#endif
 #ifdef V6
 		io = creat(file, 0644);
 #else
@@ -757,15 +757,16 @@ cre:
 		if (io < 0)
 			syserror();
 		writing = 1;
-		if (hush == 0)
+		if (hush == 0) {
 			if (nonexist)
 				ex_printf(" [New file]");
 			else if (value(WRITEANY) && edfile() != EDF)
 				ex_printf(" [Existing file]");
+		}
 #ifdef	FLOCKFILE
 		if (!*iop)
 			*iop = dup(io) ;
-#endif	FLOCKFILE
+#endif
 		break;
 
 	case 2:
@@ -790,13 +791,13 @@ cre:
 " File being modified by another process - use \"w!>>\" to write");
 		 	else *lp = LOCK_EX ;
 		}
-#endif	FLOCKFILE
+#endif
 		break;
 	}
 #ifdef	FLOCKFILE
 	if (flock(*iop, LOCK_EX|LOCK_NB) >= 0)
 		*lp = LOCK_EX ;
-#endif	FLOCKFILE
+#endif
 	putfile(0);
 #ifndef	vms
 	(void) fsync(io);
@@ -900,8 +901,10 @@ putfile(int isfilter)
 	line *a1;
 	register char *fp, *lp;
 	register int nib;
-	struct stat statb;
 
+#ifndef CRYPT
+	(void)isfilter;
+#endif
 	a1 = addr1;
 	clrstats();
 	cntln = addr2 - a1 + 1;
