@@ -395,7 +395,8 @@ oops:
 #endif
 }
 
-TSYNC()
+void
+TSYNC(void)
 {
 
 	if (dirtcnt > MAXDIRT) {	/* mjm: 12 --> MAXDIRT */

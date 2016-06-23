@@ -7,7 +7,7 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex_io.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -42,6 +42,10 @@ long	cntnull;		/* Count of nulls " */
 long	cntodd;			/* Count of non-ascii characters " */
 
 static void checkmodeline(char *);
+static int gscan(void);
+static int samei(struct stat *, char *);
+static int edfile(void);
+static int iostats(void);
 
 #ifdef	FLOCKFILE
 /*
@@ -177,7 +181,8 @@ filename(int comm)
  * Get the argument words for a command into genbuf
  * expanding # and %.
  */
-getargs()
+int
+getargs(void)
 {
 	register int c;
 	register char *cp, *fp;
@@ -338,7 +343,8 @@ glob(struct glob *gp)
  * Scan genbuf for shell metacharacters.
  * Set is union of v7 shell and csh metas.
  */
-gscan()
+static int
+gscan(void)
 {
 #ifndef	vms			/* Never have meta-characters in vms */
 	register char *cp;
@@ -354,7 +360,9 @@ gscan()
  * Parse one filename into file.
  */
 struct glob G;
-getone()
+
+void
+getone(void)
 {
 	register char *str;
 
@@ -550,7 +558,8 @@ fail_lock:
 	rop3(c);
 }
 
-rop2()
+void
+rop2(void)
 {
 	size_t first, last, a;
 
@@ -575,8 +584,8 @@ rop2()
 	}
 }
 
-rop3(c)
-	int c;
+void
+rop3(int c)
 {
 
 	if (iostats() == 0 && c == 'e')
@@ -616,9 +625,8 @@ other:
 /*
  * Are these two really the same inode?
  */
-samei(sp, cp)
-	struct stat *sp;
-	char *cp;
+static int
+samei(struct stat *sp, char *cp)
 {
 	struct stat stb;
 
@@ -635,8 +643,9 @@ samei(sp, cp)
 /*
  * Write a file.
  */
-wop(dofname)
-bool dofname;	/* if 1 call filename, else use savedfile */
+void
+wop(bool dofname)
+/* bool dofname;	/ * if 1 call filename, else use savedfile */
 {
 	register int c, exclam, nonexist;
 	line *saddr1, *saddr2;
@@ -811,7 +820,8 @@ cre:
  * if this is a partial buffer, and distinguish
  * all cases.
  */
-edfile()
+static int
+edfile(void)
 {
 
 	if (!edited || !eq(file, savedfile))
@@ -824,7 +834,8 @@ edfile()
  */
 char *nextip;
 
-getfile()
+int
+getfile(void)
 {
 	int c;
 	register char *lp, *fp;
@@ -1027,7 +1038,8 @@ clrstats(void)
 /*
  * Io is finished, close the unit and print statistics.
  */
-iostats()
+static int
+iostats(void)
 {
 
 	close(io);

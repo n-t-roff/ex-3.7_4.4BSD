@@ -62,6 +62,7 @@ jmp_buf venv;
 static void ovend(ttymode);
 static void vok(char *);
 static void ovbeg(void);
+static void setwind(void);
 
 /*
  * Enter open mode
@@ -304,7 +305,8 @@ savevis(void)
  * Restore a sensible state after a visual/open, moving the saved
  * stuff back to [unddol,dol], and killing the partial line kill indicators.
  */
-undvis()
+void
+undvis(void)
 {
 
 	if (ruptible)
@@ -324,7 +326,8 @@ undvis()
  * Set the window parameters based on the base state bastate
  * and the available buffer space.
  */
-setwind()
+static void
+setwind(void)
 {
 
 	WCOLS = COLUMNS;

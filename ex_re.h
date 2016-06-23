@@ -74,3 +74,9 @@ var char	rhsbuf[RHSSIZE];	/* Rhs of last substitute */
 #define	CCHR	20
 #define	CBRC	24
 #define	CLET	25
+
+void global(bool);
+int substitute(int);
+int compile(int, int);
+int execute(int, line *);
+int advance(char *, char *);

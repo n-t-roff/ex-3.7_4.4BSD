@@ -82,7 +82,7 @@ vmain(void)
 		Xhadcnt = hadcnt = 0;
 		Xcnt = cnt = 1;
 		splitw = 0;
-		if (i = holdupd) {
+		if ((i = holdupd)) {
 			if (state == VISUAL)
 				ignore(peekkey());
 			holdupd = 0;
@@ -752,7 +752,7 @@ insrt:
 			vmacchng(1);
 			setLAST();
 			i = 0;
-			if (vreg && partreg(vreg) || !vreg && pkill[0]) {
+			if ((vreg && partreg(vreg)) || (!vreg && pkill[0])) {
 				/*
 				 * Restoring multiple lines which were partial
 				 * lines; will leave cursor in middle
@@ -785,7 +785,8 @@ insrt:
 			 */
 			addr = dol - fendcore;	/* old dol */
 			CATCH
-				vremote(1, vreg ? putreg : put, vreg);
+				vremote(1, vreg ? putreg : (void (*)(int))put,
+				    vreg);
 			ONERR
 				if (vreg == -1) {
 					splitw = 0;

@@ -7,7 +7,7 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex_get.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -22,12 +22,18 @@ static char sccsid[] = "@(#)ex_get.c	8.1 (Berkeley) 6/9/93";
 static	bool junkbs;
 short	lastc = '\n';
 
-ignchar()
+static int getach(void);
+static int smunch(int, char *);
+static void checkjunk(int);
+
+void
+ignchar(void)
 {
 	ignore(ex_getchar());
 }
 
-ex_getchar()
+int
+ex_getchar(void)
 {
 	register int c;
 
@@ -37,7 +43,8 @@ ex_getchar()
 	return (c);
 }
 
-getcd()
+int
+getcd(void)
 {
 	register int c;
 
@@ -56,7 +63,8 @@ again:
 	return (c);
 }
 
-peekchar()
+int
+peekchar(void)
 {
 
 	if (peekc == 0)
@@ -64,14 +72,16 @@ peekchar()
 	return (peekc);
 }
 
-peekcd()
+int
+peekcd(void)
 {
 	if (peekc == 0)
 		peekc = getcd();
 	return (peekc);
 }
 
-getach()
+static int
+getach(void)
 {
 	register int c;
 	static char inputline[BUFSIZ];
@@ -126,7 +136,8 @@ top:
  */
 static	short	lastin;
 
-gettty()
+int
+gettty(void)
 {
 	register int c = 0;
 	register char *cp = genbuf;
@@ -228,9 +239,8 @@ gettty()
  * This should really be done differently so as to use the whitecnt routine
  * and also to hack indenting for LISP.
  */
-smunch(col, ocp)
-	register int col;
-	char *ocp;
+static int
+smunch(int col, char *ocp)
 {
 	register char *cp;
 
@@ -255,6 +265,7 @@ smunch(col, ocp)
 
 char	*cntrlhm =	"^H discarded\n";
 
+static void
 checkjunk(int c)
 {
 
@@ -265,8 +276,7 @@ checkjunk(int c)
 }
 
 line *
-setin(addr)
-	line *addr;
+setin(line *addr)
 {
 
 	if (addr == zero)

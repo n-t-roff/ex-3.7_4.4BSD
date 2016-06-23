@@ -339,3 +339,4 @@ void	vnoapp(void);
 void	voOpen(int, int);
 int	find(int);
 void	fixzero(void);
+void	undvis(void);
