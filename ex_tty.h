@@ -201,3 +201,6 @@ var	int	ttymesg;	/* original mode of users tty */
 
 void addmac(char *,char *,char *,struct maps *);
 int map(int,struct maps *);
+void setterm(char *);
+void setsize(void);
+char *fkey(int);

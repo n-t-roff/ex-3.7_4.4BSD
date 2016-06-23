@@ -1155,7 +1155,6 @@ mapcmd(int un, int ab)
 	 */
 	if (lhs[0] == '#') {
 		char *fnkey;
-		char *fkey();
 		char funkey[3];
 
 		fnkey = fkey(lhs[1] - '0');

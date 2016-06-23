@@ -137,7 +137,6 @@ $TMPNAM: ${TMPNAM}.o
 	\$(CC) \$(_CFLAGS) -o \$@ ${TMPNAM}.o \$(TERMLIB)
 EOT
 	cat <<EOT >>$TMPC
-#include <term.h>
 #include "ex.h"
 #include "ex_tty.h"
 int main() {

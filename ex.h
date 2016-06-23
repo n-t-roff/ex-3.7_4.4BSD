@@ -71,6 +71,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <time.h>
+#include <stdlib.h>
 
 #ifndef var
 #define var	extern
@@ -614,6 +616,10 @@ int	ex_getchar(void);
 int	getcd(void);
 int	peekchar(void);
 int	peekcd(void);
+int	topen(char *, char *);
+int	tseek(int, long);
+int	tgets(char *, int, int);
+void	tclose(int);
 
 /*
  * C doesn't have a (void) cast, so we have to fake it for lint's sake.

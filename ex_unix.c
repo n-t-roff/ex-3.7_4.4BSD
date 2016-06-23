@@ -248,7 +248,6 @@ filter(int mode)
 	static int pvec[2];
 	ttymode f;	/* mjm: was register */
 	register int lines = lineDOL();
-	struct stat statb;
 
 	mode++;
 	if (mode & 2) {

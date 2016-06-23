@@ -29,12 +29,23 @@ static char sccsid[] = "@(#)ex_temp.c	8.1 (Berkeley) 6/9/93";
 #define	EPOSITION	13
 #endif
 
+#ifdef	VMUNIX
+# ifdef	vms
+#  define	INCORB	32
+# else
+#  define	INCORB	64
+# endif
+char	incorb[INCORB+1][BUFSIZ];
+# define	pagrnd(a)	((char *)(((intptr_t)a)&~(BUFSIZ-1)))
+int	stilinc;	/* up to here not written yet */
+#endif
+
 static void blkio(int, char *, ssize_t (*)());
 static void regio(int, ssize_t (*iofcn)());
 static void rbflush(void);
 static int REGblk(void);
 static void KILLreg(int);
-static size_t shread(void);
+static ssize_t shread(void);
 static int getREG(void);
 static void kshift(void);
 static void YANKline(void);
@@ -106,7 +117,6 @@ vms_no_check_dir:
 		goto dumbness;
 #ifdef VMUNIX
 	{
-		extern stilinc;		/* see below */
 		stilinc = 0;
 	}
 #endif
@@ -152,7 +162,7 @@ ex_getline(line tl)
 	bp = getblock(tl, READ);
 	nl = nleft;
 	tl &= ~OFFMSK;
-	while (*lp++ = *bp++)
+	while ((*lp++ = *bp++))
 		if (--nl == 0) {
 			bp = getblock(tl += INCRMT, READ);
 			nl = nleft;
@@ -173,7 +183,7 @@ putline(void)
 	bp = getblock(tl, WRITE);
 	nl = nleft;
 	tl &= ~OFFMSK;
-	while (*bp = *lp++) {
+	while ((*bp = *lp++)) {
 		if (*bp++ == '\n') {
 			*--bp = 0;
 			linebp = lp;
@@ -272,17 +282,6 @@ getblock(line atl, int iof)
 	oblock = bno;
 	return (obuff + off);
 }
-
-#ifdef	VMUNIX
-#ifdef	vms
-#define	INCORB	32
-#else
-#define	INCORB	64
-#endif
-char	incorb[INCORB+1][BUFSIZ];
-#define	pagrnd(a)	((char *)(((intptr_t)a)&~(BUFSIZ-1)))
-int	stilinc;	/* up to here not written yet */
-#endif
 
 static void
 blkio(int b, char *buf, ssize_t (*iofcn)())
@@ -473,7 +472,8 @@ oops:
 static int
 REGblk(void)
 {
-	register int i, j, m;
+	size_t i;
+	int j, m;
 
 	for (i = 0; i < sizeof rused / sizeof rused[0]; i++) {
 		m = (rused[i] ^ 0177777) & 0177777;
@@ -525,7 +525,7 @@ KILLreg(int c)
 }
 
 /*VARARGS*/
-static size_t
+static ssize_t
 shread(void)
 {
 	struct front { short a; short b; };

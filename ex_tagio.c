@@ -7,7 +7,7 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex_tagio.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -32,8 +32,8 @@ static int bcnt = 0;
 static int b_size = MAXBSIZE;
 static char *ibuf;
 
-topen(file, buf)
-char *file, *buf;
+int
+topen(char *file, char *buf)
 {
 	int fd;
 	struct stat statb;
@@ -50,9 +50,8 @@ char *file, *buf;
 	return(fd);
 }
 
-tseek(fd, off)
-int fd;
-long off;
+int
+tseek(int fd, long off)
 {
 	int nblock;
 
@@ -68,30 +67,28 @@ long off;
 	return(0);
 }
 
-tgets(buf, cnt, fd)
-register char *buf;
-int cnt;
-int fd;
+int
+tgets(char *buf, int cnt, int fd)
 {
 	register char *cp;
-	register cc;
+	int cc;
 
 	cc = offset;
 	if (cc == -1) {
 		if ((bcnt = read(fd, ibuf, b_size)) <= 0)
-			return (NULL);
+			return (0);
 		cc = 0;
 		block = 0;
 	}
 	if (bcnt == 0)		/* EOF */
-		return(NULL);
+		return(0);
 	cp = ibuf + cc;
 	while (--cnt > 0) {
 		if (++cc > bcnt) {
 			block += b_size;
 			if ((bcnt = read(fd, ibuf, b_size)) <= 0) {
 				offset = cc;
-				return (NULL);
+				return (0);
 			}
 			cp = ibuf;
 			cc = 1;
@@ -99,13 +96,13 @@ int fd;
 		if ((*buf++ = *cp++) == '\n')
 			break;
 	}
-	*--buf = NULL;
+	*--buf = 0;
 	offset = cc;
 	return(1);
 }
 
-tclose(fd)
-int fd;
+void
+tclose(int fd)
 {
 	(void)close(fd);
 	offset = -1;

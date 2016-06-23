@@ -7,7 +7,7 @@
  * Agreement and your Software Agreement with AT&T (Western Electric).
  */
 
-#ifndef lint
+#if 0
 static char sccsid[] = "@(#)ex_tty.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
@@ -20,6 +20,10 @@ static char sccsid[] = "@(#)ex_tty.c	8.1 (Berkeley) 6/9/93";
  * a shell escape which may change them.
  */
 /* short	ospeed = -1;	mjm: def also in tputs.c of termcap.a  */
+
+static void zap(void);
+static int cost(char *);
+static int countnum(int);
 
 void
 gettmode(void)
@@ -66,8 +70,9 @@ bool *sflags[] = {
 char **fkeys[10] = {
 	&F0, &F1, &F2, &F3, &F4, &F5, &F6, &F7, &F8, &F9
 };
-setterm(type)
-	char *type;
+
+void
+setterm(char *type)
 {
 	char *tgoto();
 	register int unknown;
@@ -155,7 +160,8 @@ setterm(type)
 		serror("%s: Unknown terminal type", type);
 }
 
-setsize()
+void
+setsize(void)
 {
 	register int l, i;
 #ifdef	TIOCGWINSZ
@@ -194,7 +200,8 @@ setsize()
 		EX_LINES = 2;
 }
 
-zap()
+static void
+zap(void)
 {
 	register char *namp;
 	register bool **fp;
@@ -235,8 +242,7 @@ longname(bp, def)
 }
 
 char *
-fkey(i)
-	int i;
+fkey(int i)
 {
 	if (0 <= i && i <= 9)
 		return(*fkeys[i]);
@@ -255,11 +261,10 @@ fkey(i)
  * than AL vs SR, won't be really affected.)
  */
 static int costnum;
-cost(str)
-char *str;
-{
-	int countnum();
 
+static int
+cost(char *str)
+{
 	if (str == NULL || *str=='O')	/* OOPS */
 		return 10000;	/* infinity */
 	costnum = 0;
@@ -268,8 +273,10 @@ char *str;
 }
 
 /* ARGSUSED */
-countnum(ch)
-char ch;
+static int
+countnum(int ch)
 {
+	(void)ch;
 	costnum++;
+	return 0;
 }

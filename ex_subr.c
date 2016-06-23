@@ -29,7 +29,7 @@ any(int c, char *s)
 {
 	register int x;
 
-	while (x = *s++)
+	while ((x = *s++))
 		if (x == c)
 			return (1);
 	return (0);
@@ -477,7 +477,7 @@ void
 putmk1(line *addr, int n)
 {
 	register line *markp;
-	register oldglobmk;
+	int oldglobmk;
 
 	oldglobmk = *addr & 1;
 	*addr &= ~1;
@@ -501,7 +501,7 @@ int
 qcolumn(char *lim, char *gp)
 {
 	register int x;
-	int (*OO)();
+	void (*OO)();
 
 	OO = Outchar;
 	Outchar = qcount;
@@ -691,7 +691,7 @@ char *
 vfindcol(int i)
 {
 	register char *cp;
-	register int (*OO)() = Outchar;
+	void (*OO)() = Outchar;
 	char *s;
 
 	Outchar = qcount;
@@ -853,7 +853,7 @@ onintr(int i)
 	} else
 		vraw();
 #endif
-	error("\nInterrupt" + inopen);
+	serror("%sInterrupt", inopen ? "" : "\n");
 }
 
 /*
@@ -923,6 +923,7 @@ onsusp(int i)
 {
 	ttymode f;
 	struct winsize win;
+	sigset_t sigmsk;
 
 	(void)i;
 	f = setty(normf);
@@ -930,7 +931,8 @@ onsusp(int i)
 	putpad(TE);
 	flush();
 
-	(void) sigsetmask(0);
+	sigemptyset(&sigmsk);
+	sigprocmask(SIG_SETMASK, &sigmsk, NULL);
 	signal(SIGTSTP, SIG_DFL);
 	kill(0, SIGTSTP);
 
