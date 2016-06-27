@@ -195,7 +195,7 @@ error1(char *str)
 		putNFL();
 	if (die)
 		ex_exit(1);
-	lseek(0, 0L, 2);
+	lseek(0, 0L, SEEK_END);
 	if (inglobal)
 		setlastchar('\n');
 	while (lastchar() != '\n' && lastchar() != EOF)

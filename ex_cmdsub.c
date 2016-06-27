@@ -548,7 +548,7 @@ badtag:
 		/*
 		 * Avoid stdio and scan tag file linearly.
 		 */
-		io = open(fn, 0);
+		io = open(fn, O_RDONLY);
 		if (io<0)
 			continue;
 		tfcount++;

@@ -302,7 +302,7 @@ glob(struct glob *gp)
 		dup(pvec[1]);
 		close(pvec[0]);
 		close(2);	/* so errors don't mess up the screen */
-		ignore(open(_PATH_DEVNULL, 1));
+		ignore(open(_PATH_DEVNULL, O_WRONLY));
 		execl(svalue(SHELL), "sh", "-c", genbuf, NULL);
 		oerrno = errno;
 		close(1);
@@ -393,7 +393,7 @@ rop(int c)
 	int *lp, *iop;
 #endif
 
-	io = open(file, 0);
+	io = open(file, O_RDONLY);
 	if (io < 0) {
 		if (c == 'e' && errno == ENOENT) {
 			edited++;
@@ -694,7 +694,7 @@ wop(bool dofname)
 	}
 	if (!*iop && !nonexist){
 		*lp = 0 ;
-		if ((*iop = open(file, 1)) < 0) *iop = 0 ;
+		if ((*iop = open(file, O_WRONLY)) < 0) *iop = 0 ;
 	}
 #endif
 	switch (c) {
@@ -712,7 +712,7 @@ wop(bool dofname)
 				if (samei(&stbuf, _PATH_TTY))
 					break;
 			}
-			io = open(file, 1);
+			io = open(file, O_WRONLY);
 			if (io < 0)
 				syserror();
 			if (!isatty(io))
@@ -770,13 +770,13 @@ cre:
 		break;
 
 	case 2:
-		io = open(file, 1);
+		io = open(file, O_WRONLY);
 		if (io < 0) {
 			if (exclam || value(WRITEANY))
 				goto cre;
 			syserror();
 		}
-		lseek(io, 0l, 2);
+		lseek(io, 0l, SEEK_END);
 #ifdef	FLOCKFILE
 		if (!*iop) *iop = dup(io) ;
 		if (*lp != LOCK_EX && !exclam) {
@@ -986,7 +986,7 @@ source(char *fil, bool okfail)
 	if (slevel <= 0)
 		ttyindes = saveinp;
 	close(0);
-	if (open(fil, 0) < 0) {
+	if (open(fil, O_RDONLY) < 0) {
 		oerrno = errno;
 		setrupt();
 		dup(saveinp);

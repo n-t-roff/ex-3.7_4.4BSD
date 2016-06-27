@@ -67,15 +67,15 @@ static void setwind(void);
 /*
  * Enter open mode
  */
-#ifdef u370
+
 char	atube[TUBESIZE+LBSIZE];
-#endif
+
 void
 oop(void)
 {
 	register char *ic;
-#ifndef u370
-	static char atube[TUBESIZE + LBSIZE];
+#if 0
+	char atube[TUBESIZE + LBSIZE];
 #endif
 	ttymode f;	/* mjm: was register */
 
@@ -190,8 +190,8 @@ void
 vop(void)
 {
 	register int c;
-#ifndef u370
-	static char atube[TUBESIZE + LBSIZE];
+#if 0
+	char atube[TUBESIZE + LBSIZE];
 #endif
 	ttymode f;	/* mjm: was register */
 

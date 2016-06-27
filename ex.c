@@ -167,9 +167,9 @@ main(int ac, char **av)
 	 */
 	draino();
 #ifdef EXSTRINGS
-	erfile = open(erpath+4, 0);
+	erfile = open(erpath+4, O_RDONLY);
 	if (erfile < 0) {
-		erfile = open(erpath, 0);
+		erfile = open(erpath, O_RDONLY);
 	}
 #endif
 	pstop();
