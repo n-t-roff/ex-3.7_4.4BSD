@@ -30,10 +30,16 @@ $ make distclean
   `map  ^[[5~ ^B` and `map  ^[[6~ ^F` into `~/.exrc`.
   If this doesn't work on your terminal you may need other escape sequences which can be retrieved with
   `infocmp -l` from capabilities `kpp` and `knp`.
+* The documents
+  [vi/paper.pdf](http://n-t-roff.github.io/ex/3.7_4.4BSD/vi/paper.pdf)
+  and
+  [ex/paper.pdf](http://n-t-roff.github.io/ex/3.7_4.4BSD/ex/paper.pdf)
+  describe this vi version in detail.
 
 **Attention**:
 The original `vi` had not been 8-bit clean!
-Moreover it does automatically change all 8-bit characters to 7-bit in the whole file even if no editing is done!
+Moreover it does automatically change all 8-bit characters to 7-bit
+in the whole file even if no editing is done!
 This will e.g. destroy all UTF-8 characters.
 `vi` gives you a hint in this case by requiring `:w!` for writing even if you have UNIX write permissions
 (so be warned if `vi` asks for `:w!` unexpectedly).

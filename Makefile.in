@@ -13,8 +13,9 @@ VERSION=3.7
 #
 PREFIX=	${DESTDIR}/usr/local
 BINDIR=	${PREFIX}/bin
-MANDIR=	${PREFIX}/share/man
 LIBEXECDIR=${PREFIX}/libexec
+MANDIR=	${PREFIX}/share/man
+SHAREDIR=${PREFIX}/share/ex/${VERSION}
 #
 # Either none or both of the next two lines needs to be uncommented
 #
@@ -23,10 +24,9 @@ LIBEXECDIR=${PREFIX}/libexec
 #
 PROG=	ex
 SUBDIR=	ex3.7recover ex3.7preserve
-DBG_CFLAGS=-Wall -Wextra \
-	-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls \
+DBG_CFLAGS=-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls \
 	-fsanitize=undefined -fsanitize=integer -fsanitize=address
-_CFLAGS=#${DBG_CFLAGS}
+_CFLAGS=-Wall -Wextra #${DBG_CFLAGS}
 _CPPFLAGS=-DTABS=8 -DLISPCODE -DCHDIR -DUCVISUAL -DVMUNIX -DFASTTAG -DUSG3TTY \
 	${D_SBRK} -DLIBEXECDIR='"${LIBEXECDIR}"'
 _LDFLAGS=-s
@@ -53,7 +53,7 @@ all: ${PROG}
 ${PROG}: ${OBJS}
 	${CC} ${CFLAGS} ${_CFLAGS} ${LDFLAGS} ${_LDFLAGS} -o $@ ${OBJS} ${LDADD}
 
-install: ${BINDIR} ${LIBEXECDIR} ${MANDIR}/man1
+install: ${BINDIR} ${LIBEXECDIR} ${MANDIR}/man1 ${SHAREDIR}
 	install ${PROG} ${BINDIR}/
 	for i in vi view edit; do \
 		ln -sf ${BINDIR}/${PROG} ${BINDIR}/$$i; \
@@ -66,6 +66,10 @@ install: ${BINDIR} ${LIBEXECDIR} ${MANDIR}/man1
 	for i in ${SUBDIR}; do \
 		install $$i/$$i ${LIBEXECDIR}/; \
 	done
+	for i in edit vi ex; do \
+		cp USD.doc/$$i/*.pdf ${SHAREDIR}/; \
+	done
+	chmod 644 ${SHAREDIR}/*.pdf
 
 uninstall:
 	for i in ${PROG} vi view edit; do \
@@ -75,8 +79,9 @@ uninstall:
 	for i in ${SUBDIR}; do \
 		rm -f ${LIBEXECDIR}/$$i; \
 	done
+	rm -rf ${SHAREDIR}
 
-${BINDIR} ${LIBEXECDIR} ${MANDIR}/man1:
+${BINDIR} ${LIBEXECDIR} ${MANDIR}/man1 ${SHAREDIR}:
 	mkdir -p $@
 
 clean:

@@ -49,7 +49,7 @@
 .vs 11
 .nr HM .50i
 .nr FM .25i
-.nr PO 0
+.if n .nr PO 0
 .po 0
 .nr LL 3.5i
 .ll 3.5i

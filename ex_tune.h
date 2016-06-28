@@ -106,8 +106,8 @@
 #define	TUBECOLS	160	/* Number of screen columns for visual */
 #define	TUBESIZE	5000	/* Maximum screen size for visual */
 #else
-#define	TUBELINES	100
-#define	TUBECOLS	300
+#define	TUBELINES	150
+#define	TUBECOLS	400
 #define	TUBESIZE	(TUBELINES * TUBECOLS)
 #endif
 

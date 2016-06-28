@@ -34,10 +34,11 @@
 .ds p \v'-0.2'.\v'+0.2'
 .ds U \s-2UNIX\s+2
 .ds c \v'-0.2':\v'+0.2'
-.nr PO .25i
+.if n .nr PO .25i
 .nr LL 6.75i
 .lt 6.75i
 .ll 6.75i
+.if t .pl -.5i
 .ds CH
 .ds LF Computing Services, U.C. Berkeley
 .ds RF April 3, 1979

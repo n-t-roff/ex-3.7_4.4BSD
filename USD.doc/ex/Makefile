@@ -1,14 +1,16 @@
 #	@(#)Makefile	8.1 (Berkeley) 6/8/93
 
-DIR=	usd/13.ex
-SRCS=	ex.rm
-MACROS=	-msU
-CLEANFILES=summary.*
+TBL=	tbl -g # Heirloom
+ROFF=	troff -ms
+DPDF=	dpost | ps2pdf - # AT&T troff
 
-paper.ps: ${SRCS} summary.ps
-	${ROFF} ${SRCS} > ${.TARGET}
+all: paper.pdf summary.pdf
 
-summary.ps: ex.summary
-	${TBL} ex.summary | ${ROFF} > ${.TARGET}
+paper.pdf: ex.rm
+	${ROFF} ex.rm | ${DPDF} $@
 
-.include <bsd.doc.mk>
+summary.pdf: ex.summary
+	${TBL} ex.summary | ${ROFF} | ${DPDF} $@
+
+clean:
+	rm -f *.pdf

@@ -1,17 +1,20 @@
 #	@(#)Makefile	8.1 (Berkeley) 8/14/93
 
-DIR=	usd/12.vi
 SRCS=	vi.in vi.chars
-MACROS=	-msU
-CLEANFILES+=summary.* viapwh.*
+TBL=	tbl -g # Heirloom
+ROFF=	troff -ms
+DPDF=	dpost | ps2pdf - # DWB, Heirloom
 
-paper.ps: ${SRCS} summary.ps viapwh.ps
-	${TBL} ${SRCS} | ${ROFF} > ${.TARGET}
+all: paper.pdf summary.pdf viapwh.pdf
 
-summary.ps: vi.summary
-	${TBL} vi.summary | ${ROFF}  > ${.TARGET}
+paper.pdf: ${SRCS}
+	${TBL} ${SRCS} | ${ROFF} | ${DPDF} $@
 
-viapwh.ps: vi.apwh.ms
-	${ROFF} vi.apwh.ms > ${.TARGET}
+summary.pdf: vi.summary
+	${TBL} vi.summary | ${ROFF} | ${DPDF} $@
 
-.include <bsd.doc.mk>
+viapwh.pdf: vi.apwh.ms
+	${ROFF} vi.apwh.ms | ${DPDF} $@
+
+clean:
+	rm -f *.pdf

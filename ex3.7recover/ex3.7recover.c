@@ -26,7 +26,7 @@ static char sccsid[] = "@(#)ex3.7recover.c	8.1 (Berkeley) 6/9/93";
 #include "ex.h"
 #include "ex_temp.h"
 #include "ex_tty.h"
-#include <sys/dir.h>
+#include <dirent.h>
 #if __STDC__
 #include <stdarg.h>
 #else
@@ -230,7 +230,7 @@ static void
 listfiles(char *dirname)
 {
 	register DIR *dir;
-	struct direct *dirent;
+	struct dirent *dirent;
 	int ecount;
 	register int f;
 	char *cp;
@@ -448,7 +448,7 @@ findtmp(char *dir)
 static void
 searchdir(char *dirname)
 {
-	struct direct *dirent;
+	struct dirent *dirent;
 	register DIR *dir;
 
 	dir = opendir(dirname);

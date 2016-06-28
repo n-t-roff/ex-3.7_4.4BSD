@@ -1,11 +1,11 @@
 #	@(#)Makefile	8.1 (Berkeley) 6/8/93
 
-DIR=	usd/11.edit
 SRCS=	edittut.ms
-MACROS=	-msU
+ROFF=	troff -ms
+DPDF=	dpost | ps2pdf - # UNIX troff
 
-paper.ps: ${SRCS}
-	${TBL} ${SRCS} | ${ROFF} > ${.TARGET}
+paper.pdf: ${SRCS}
+	${ROFF} ${SRCS} | ${DPDF} $@
 
 # index for versatec is different from the one in edit.tut
 # because the fonts are different and entries reference page
@@ -15,4 +15,5 @@ paper.ps: ${SRCS}
 editvindex:
 	${TROFF} ${MACROS} -n22 edit.vindex
 
-.include <bsd.doc.mk>
+clean:
+	rm -f *.pdf
