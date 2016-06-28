@@ -550,7 +550,7 @@ reread:
 				mbuf[1] = *cursor;
 				mbuf[2] = cursor[1]==0 ? 0 : 'l';
 				mbuf[3] = 0;
-				if (isalpha(mbuf[1]))
+				if (isalpha((int)mbuf[1]))
 					mbuf[1] ^= ' ';	/* toggle the case */
 				macpush(mbuf, 1);
 			}
@@ -1143,7 +1143,7 @@ grabtag(void)
 			if (dp < &lasttag[sizeof lasttag - 2])
 				*dp++ = *cp;
 			cp++;
-		} while (isalpha(*cp) || isdigit(*cp) || *cp == '_'
+		} while (isalpha((int)*cp) || isdigit((int)*cp) || *cp == '_'
 #ifdef LISPCODE
 			|| (value(LISP) && *cp == '-')
 #endif

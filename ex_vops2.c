@@ -555,7 +555,7 @@ bakchar:
 			 */
 			case CTRL('w'):
 				wdkind = 1;
-				for (cp = gcursor; cp > ogcursor && isspace(cp[-1]); cp--)
+				for (cp = gcursor; cp > ogcursor && isspace((int)cp[-1]); cp--)
 					continue;
 				for (c = wordch(cp - 1);
 				    cp > ogcursor && wordof(c, cp - 1); cp--)
@@ -659,13 +659,13 @@ vbackup:
 				/*
 				 * Find end of previous word if we are past it.
 				 */
-				for (cp=gcursor; cp>ogcursor && isspace(cp[-1]); cp--)
+				for (cp=gcursor; cp>ogcursor && isspace((int)cp[-1]); cp--)
 					;
 				if (outcol+(backsl?OCOLUMNS:0) - (gcursor-cp) >= OCOLUMNS - value(WRAPMARGIN)) {
 					/*
 					 * Find beginning of previous word.
 					 */
-					for (; cp>ogcursor && !isspace(cp[-1]); cp--)
+					for (; cp>ogcursor && !isspace((int)cp[-1]); cp--)
 						;
 					if (cp <= ogcursor) {
 						/*
@@ -690,7 +690,7 @@ vbackup:
 				/*
 				 * Erase white space before the word.
 				 */
-				while (cp > ogcursor && isspace(cp[-1]))
+				while (cp > ogcursor && isspace((int)cp[-1]))
 					cp--;	/* skip blank */
 				gobblebl = 3;
 				goto vbackup;

@@ -1201,7 +1201,7 @@ addmac(char *src,char *dest,char *dname,struct maps *mp)
 		 * linefeed, and escape, he can screw himself. This is
 		 * so weird I don't bother to check for it.
 		 */
-		if ((isalpha(src[0]) && src[1]) || any(src[0],":"))
+		if ((isalpha((int)src[0]) && src[1]) || any(src[0],":"))
 			error("Too dangerous to map that");
 	}
 	else if (dest) {

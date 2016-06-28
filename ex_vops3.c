@@ -413,13 +413,13 @@ ltosol1(char *parens)
 
 	if (*parens && !*wcursor && !lnext())
 		return (0);
-	while (isspace(*wcursor) || (*wcursor == 0 && *parens))
+	while (isspace((int)*wcursor) || (*wcursor == 0 && *parens))
 		if (!lnext())
 			return (0);
 	if (any(*wcursor, parens) || dir > 0)
 		return (1);
 	for (cp = wcursor; cp > linebuf; cp--)
-		if (isspace(cp[-1]) || any(cp[-1], parens))
+		if (isspace((int)cp[-1]) || any(cp[-1], parens))
 			break;
 	wcursor = cp;
 	return (1);

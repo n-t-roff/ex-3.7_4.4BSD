@@ -811,7 +811,7 @@ execute(int gf, line *addr)
 		do {
 			if (c != *p1 && (!value(IGNORECASE) ||
 			   !((islower(c) && toupper(c) == *p1) ||
-			   (islower(*p1) && toupper(*p1) == c))))
+			   (islower((int)*p1) && toupper((int)*p1) == c))))
 				continue;
 			if (advance(p1, p2)) {
 				loc1 = p1;
@@ -928,12 +928,12 @@ star:
 	case CBRC:
 		if (lp == linebuf)
 			continue;
-		if ((isdigit(*lp) || uletter(*lp)) && !uletter(lp[-1]) && !isdigit(lp[-1]))
+		if ((isdigit((int)*lp) || uletter((int)*lp)) && !uletter((int)lp[-1]) && !isdigit((int)lp[-1]))
 			continue;
 		return (0);
 
 	case CLET:
-		if (!uletter(*lp) && !isdigit(*lp))
+		if (!uletter((int)*lp) && !isdigit((int)*lp))
 			continue;
 		return (0);
 
