@@ -558,7 +558,7 @@ save(line *a1, line *a2)
 #endif
 	undkind = UNDNONE;
 	undadot = dot;
-	more = (d2 - d1 + 1) - (unddol - dol);
+	more = (ssize_t)(d2 - d1 + 1) - (unddol - dol);
 	while (more > (endcore - truedol))
 		if (morelines() < 0)
 #ifdef UNIX_SBRK

@@ -15,7 +15,7 @@ PREFIX=	${DESTDIR}/usr/local
 BINDIR=	${PREFIX}/bin
 LIBEXECDIR=${PREFIX}/libexec
 MANDIR=	${PREFIX}/share/man
-SHAREDIR=${PREFIX}/share/ex/${VERSION}
+SHAREDIR=${PREFIX}/share/ex/${VERSION}_4.4BSD
 #
 # Either none or both of the next two lines needs to be uncommented
 #
@@ -67,9 +67,9 @@ install: ${BINDIR} ${LIBEXECDIR} ${MANDIR}/man1 ${SHAREDIR}
 		install $$i/$$i ${LIBEXECDIR}/; \
 	done
 	for i in edit vi ex; do \
-		cp USD.doc/$$i/*.pdf ${SHAREDIR}/; \
+		[ -e ${SHAREDIR}/$$i ] || mkdir ${SHAREDIR}/$$i; \
+		install -m 644 USD.doc/$$i/*.pdf ${SHAREDIR}/$$i/; \
 	done
-	chmod 644 ${SHAREDIR}/*.pdf
 
 uninstall:
 	for i in ${PROG} vi view edit; do \
