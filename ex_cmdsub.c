@@ -524,7 +524,8 @@ badtag:
 	 * Loop once for each file in tags "path".
 	 */
 	CP(tagfbuf, svalue(TAGS));
-	fne = tagfbuf - 1;
+	fne = tagfbuf;
+	fne--;
 	while (fne) {
 		fn = ++fne;
 		while (*fne && *fne != ' ')

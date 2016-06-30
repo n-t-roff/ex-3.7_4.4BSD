@@ -602,7 +602,7 @@ void
 vudump(char *s)
 {
 	register line *p;
-	char savelb[1024];
+	char savelb[LBSIZE];
 
 	if (!trace) return;
 

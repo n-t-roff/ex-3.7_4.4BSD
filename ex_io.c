@@ -1088,7 +1088,6 @@ checkmodeline(char *l)
 {
 	char *beg, *end;
 	char cmdbuf[1024];
-	char *index(), *rindex(), *strncpy();
 
 	beg = index(l, ':');
 	if (beg == NULL)

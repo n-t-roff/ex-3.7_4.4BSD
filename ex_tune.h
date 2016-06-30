@@ -32,7 +32,7 @@
 /* FNSIZE is also defined in expreserve.c */
 #define	FNSIZE		128		/* File name size */
 #ifdef VMUNIX
-#define	LBSIZE		1024
+#define	LBSIZE		BUFSIZ
 #define	ESIZE		512
 #define CRSIZE		1024
 #else

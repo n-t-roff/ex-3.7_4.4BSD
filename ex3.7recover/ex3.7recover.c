@@ -19,9 +19,6 @@ static char sccsid[] = "@(#)ex3.7recover.c	8.1 (Berkeley) 6/9/93";
 
 #include <stdlib.h>
 #include <stdio.h>	/* mjm: BUFSIZ: stdio = 512, VMUNIX = 1024 */
-#undef	BUFSIZ		/* mjm: BUFSIZ different */
-#undef	EOF		/* mjm: EOF and NULL effectively the same */
-#undef	NULL
 
 #include "ex.h"
 #include "ex_temp.h"

@@ -9,6 +9,7 @@
  *	@(#)ex.h	8.1 (Berkeley) 6/9/93
  */
 
+#include <stdio.h>
 #include <stdarg.h>
 #ifdef V6
 #include <retrofit.h>
@@ -51,7 +52,7 @@
  * of additional terminal descriptions you add to the termcap data base.
  */
 
-#define	MAXBSIZE	1024	/* Maximum block size */
+#define	MAXBSIZE	BUFSIZ	/* Maximum block size */
 #include <sys/ioctl.h>
 #ifndef	vms
 #include <sys/param.h>
@@ -161,25 +162,10 @@ extern	 struct	option options[NOPTS + 1];
  * are not debugging.  Such a modified printf exists in "printf.c" here.
  */
 #ifdef TRACE
-# include <stdio.h>
 	var	FILE	*trace;
 	var	bool	trubble;
 	var	bool	techoin;
 	var	char	tracbuf[BUFSIZ];
-#else
-# ifdef	VMUNIX
-#	define	BUFSIZ	1024
-# else
-#  ifdef u370
-#	define	BUFSIZ	4096
-#  else
-#	define	BUFSIZ	512
-#  endif
-# endif
-# ifndef NULL
-#	define	NULL	0
-# endif
-#	define	EOF	-1
 #endif
 
 /*
