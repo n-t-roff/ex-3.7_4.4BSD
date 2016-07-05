@@ -153,11 +153,7 @@ unixex(char *opt, char *up, int newstdin, int mode)
 			ignore(setty(f));
 		error("Can't make pipe for filter");
 	}
-#ifndef VFORK
 	pid = fork();
-#else
-	pid = vfork();
-#endif
 	if (pid < 0) {
 		if (mode & 1) {
 			close(pvec[0]);
@@ -194,7 +190,9 @@ unixex(char *opt, char *up, int newstdin, int mode)
 #ifdef EXSTRINGS
 		close(erfile);
 #endif
-		signal(SIGHUP, oldhup);
+		sigemptyset(&oldhup.sa_mask);
+		oldhup.sa_flags = 0;
+		sigaction(SIGHUP, &oldhup, NULL);
 		signal(SIGQUIT, oldquit);
 		if (ruptible)
 			signal(SIGINT, SIG_DFL);
@@ -342,7 +340,15 @@ waitfor(void)
 
 	if (!WIFEXITED(status)) {
 		ex_printf("%d: terminated abnormally: %s ",
-		    pid, sys_siglist[WTERMSIG(status)]);
+		    pid,
+#if defined HAVE_SYS_SIGLIST
+		    sys_siglist[WTERMSIG(status)]
+#elif defined HAVE_STRSIGNAL
+		    strsignal(WTERMSIG(status))
+#else
+# error sys_siglist[] and strsignal() not found
+#endif
+		    );
 		if (WCOREDUMP(status))
 			ex_printf("(core dumped) ");
 		if (!inopen)

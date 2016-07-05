@@ -36,7 +36,7 @@ char	vscandir[2] =	{ '/', 0 };
 void
 operate(int c, int cnt)
 {
-	register int i;
+	int i = 0;
 	void (*moveop)(int), (*deleteop)(int);
 	void (*opf)(int);
 	bool subop = 0;
@@ -748,7 +748,7 @@ find(int c)
 int
 word(void (*op)(void), int cnt)
 {
-	register int which;
+	int which = 0;
 	register char *iwc;
 	register line *iwdot = wdot;
 

@@ -75,7 +75,6 @@ char **fkeys[10] = {
 void
 setterm(char *type)
 {
-	char *tgoto();
 	register int unknown;
 	char ltcbuf[TCBUFSIZE];
 
@@ -113,7 +112,7 @@ setterm(char *type)
 	if (IC && EI==NULL) EI="";
 	if (!GT) BT=NULL;	/* If we can't tab, we can't backtab either */
 
-#ifdef TIOCLGET
+#if 0 /* def TIOCLGET */
 	/*
 	 * Now map users susp char to ^Z, being careful that the susp
 	 * overrides any arrow key, but only for hackers (=new tty driver).
@@ -138,7 +137,8 @@ setterm(char *type)
 	}
 #endif
 
-	if (tgoto(CM, 2, 2)[0] == 'O')	/* OOPS */
+	/* at first test CM for ex mode (CK) */
+	if (!CM || tgoto(CM, 2, 2)[0] == 'O')	/* OOPS */
 		CA = 0, CM = 0;
 	else
 		CA = 1, costCM = cost(tgoto(CM, 8, 10));
@@ -149,7 +149,7 @@ setterm(char *type)
 	costRP = cost(tgoto(RIGHT_PARM, 10, 10));
 	PC = xPC ? xPC[0] : 0;
 	aoftspace = tspace;
-	CP(ttytype, longname(ltcbuf, type));
+	CP(ex_ttytype, longname(ltcbuf, type));
 	/* proper strings to change tty type */
 	termreset();
 	gettmode();

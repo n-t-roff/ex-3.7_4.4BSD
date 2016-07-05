@@ -111,6 +111,49 @@ EOT
 	bmake -f $TMPMK >> $LOG 2>&1
 	test_result && MAKE=bmake
 }
+check_sys_siglist () {
+	check_for "char *sys_siglist[]"
+
+	cat <<EOT >$TMPC
+#include <signal.h>
+#include <stdio.h>
+int
+main(int argc, char **argv) {
+	printf("%s\n", sys_siglist[argc]);
+	return 0;
+}
+EOT
+	compile
+	test_result && DEFS="$DEFS -DHAVE_SYS_SIGLIST"
+}
+check_strsignal () {
+	check_for "strsignal(3)"
+
+	cat <<EOT >$TMPC
+#include <string.h>
+#include <stdio.h>
+int
+main(int argc, char **argv) {
+	printf("%s\n", strsignal(argc));
+	return 0;
+}
+EOT
+	compile
+	test_result && DEFS="$DEFS -DHAVE_STRSIGNAL"
+}
+check_netdb_h () {
+	check_for "<netdb.h>"
+
+	cat <<EOT >$TMPC
+#include <netdb.h>
+int
+main() {
+	return 0;
+}
+EOT
+	compile
+	test_result && DEFS="$DEFS -DHAVE_NETDB_H"
+}
 	[ ! -s compat.h ] && rm compat.h
 OUTMK=Makefile
 INMK=${OUTMK}.in
@@ -126,6 +169,9 @@ rm -f $LOG
 gen_mk
 
 check_make
+check_sys_siglist
+check_strsignal
+check_netdb_h
 
 TermTest () {
 	check_for "$1"
@@ -137,9 +183,8 @@ $TMPNAM: ${TMPNAM}.o
 	\$(CC) \$(_CFLAGS) -o \$@ ${TMPNAM}.o \$(TERMLIB)
 EOT
 	cat <<EOT >>$TMPC
-#include "ex.h"
-#include "ex_tty.h"
 int main() {
+	int tgetent(char *bp, const char *name);
 	char tcbuf[1024];
 	char *terms[] = { "xterm", "screen" };
 	unsigned i;

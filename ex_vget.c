@@ -654,7 +654,7 @@ vgetcnt(void)
 static int
 fastpeekkey(void)
 {
-	sig_t Oint;
+	struct sigaction act, oact;
 	register int c;
 
 	/*
@@ -672,7 +672,10 @@ fastpeekkey(void)
 	if (trace)
 		fprintf(trace,"\nfastpeekkey: ");
 #endif
-	Oint = signal(SIGINT, trapalarm);
+	act.sa_handler = trapalarm;
+	sigemptyset(&act.sa_mask);
+	act.sa_flags = 0;
+	sigaction(SIGINT, &act, &oact);
 	CATCH
 		if (value(TIMEOUT) && inopen >= 0) {
 			signal(SIGALRM, trapalarm);
@@ -701,7 +704,9 @@ fastpeekkey(void)
 	if (trace)
 		fprintf(trace,"[fpk:%o]",c);
 #endif
-	signal(SIGINT,Oint);
+	sigemptyset(&oact.sa_mask);
+	oact.sa_flags = 0;
+	sigaction(SIGINT, &oact, NULL);
 	return(c);
 }
 

@@ -290,10 +290,10 @@ blkio(int b, char *buf, ssize_t (*iofcn)())
 #ifdef VMUNIX
 	if (b < INCORB) {
 		if (iofcn == read) {
-			bcopy(pagrnd(incorb[b+1]), buf, BUFSIZ);
+			memmove(buf, pagrnd(incorb[b+1]), BUFSIZ);
 			return;
 		}
-		bcopy(buf, pagrnd(incorb[b+1]), BUFSIZ);
+		memmove(pagrnd(incorb[b+1]), buf, BUFSIZ);
 		if (laste) {
 			if (b >= stilinc)
 				stilinc = b + 1;

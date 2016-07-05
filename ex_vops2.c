@@ -121,7 +121,7 @@ char	*ogcursor;
 void
 vappend(int ch, int cnt, int indent)
 {
-	register int i;
+	int i = 0;
 	register char *gcursor;
 	bool escape;
 	int repcnt, savedoomed;
@@ -621,7 +621,7 @@ vbackup:
 				ex_putchar('^');
 				vgoto(y, x);
 				c = getkey();
-#ifdef TIOCSETC
+#if defined(TIOCSETC) && !defined(USG3TTY)
 				if (c == ATTN)
 					c = nttyc.t_intrc;
 #endif

@@ -29,7 +29,7 @@ static char sccsid[] = "@(#)ex_tagio.c	8.1 (Berkeley) 6/9/93";
 static long offset = -1;
 static long block = -1;
 static int bcnt = 0;
-static int b_size = MAXBSIZE;
+static int b_size = LBSIZE;
 static char *ibuf;
 
 int

@@ -484,7 +484,7 @@ tagfind(bool quick)
 {
 	char cmdbuf[BUFSIZ];
 	char filebuf[FNSIZE];
-	char tagfbuf[128];
+	char tagfbuf[ONMSZ];
 	register int c, d;
 	bool samef = 1;
 	int tfcount = 0;
@@ -493,7 +493,7 @@ tagfind(bool quick)
 	struct stat sbuf;
 #ifdef FASTTAG
 	int iof;
-	char iofbuf[MAXBSIZE];
+	char iofbuf[LBSIZE];
 	long mid;	/* assumed byte offset */
 	long top, bot;	/* length of tag file */
 #endif
@@ -624,9 +624,6 @@ badtags:
 				 */
 				names['t'-'a'] = *dot &~ 01;
 				if (inopen) {
-					extern char *ncols['z'-'a'+2];
-					extern char *cursor;
-
 					ncols['t'-'a'] = cursor;
 				}
 			}

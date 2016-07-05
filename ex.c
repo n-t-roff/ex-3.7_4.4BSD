@@ -111,6 +111,7 @@ main(int ac, char **av)
 #ifdef	vms
 	char termtype[20];
 #endif
+	struct sigaction act;
 
 	/*
 	 * Immediately grab the tty modes so that we wont
@@ -177,8 +178,11 @@ main(int ac, char **av)
 	/*
 	 * Initialize interrupt handling.
 	 */
-	oldhup = signal(SIGHUP, SIG_IGN);
-	if (oldhup == SIG_DFL)
+	act.sa_handler = SIG_IGN;
+	sigemptyset(&act.sa_mask);
+	act.sa_flags = 0;
+	sigaction(SIGHUP, &act, &oldhup);
+	if (oldhup.sa_handler == SIG_DFL)
 		signal(SIGHUP, onhup);
 	oldquit = signal(SIGQUIT, SIG_IGN);
 	ruptible = signal(SIGINT, SIG_IGN) == SIG_DFL;

@@ -17,7 +17,9 @@ static char sccsid[] = "@(#)ex_io.c	8.1 (Berkeley) 6/9/93";
 #include "ex_tty.h"
 #include "ex_vis.h"
 #include <sys/file.h>
+#ifndef __sun
 #include <a.out.h>
+#endif
 
 /*
  * File input/output, source, preserve and recover
@@ -284,7 +286,7 @@ glob(struct glob *gp)
 	}
 	if (pipe(pvec) < 0)
 		error("Can't make pipe to glob");
-	pid = vfork();
+	pid = fork();
 	io = pvec[0];
 	if (pid < 0) {
 		close(pvec[1]);
@@ -384,9 +386,11 @@ getone(void)
 void
 rop(int c)
 {
-	register int i;
 	struct stat stbuf;
+#ifndef __sun
+	register int i;
 	struct exec head;
+#endif
 	static int ovro;	/* old value(READONLY) */
 	static int denied;	/* 1 if READONLY was set due to file permissions */
 #ifdef	FLOCKFILE
@@ -427,6 +431,7 @@ rop(int c)
 	case S_IFDIR:
 		error(" Directory");
 
+#ifndef __sun
 	case S_IFREG:
 #ifdef CRYPT
 		if (xflag)
@@ -484,6 +489,7 @@ rop(int c)
 			}
 			break;
 		}
+#endif /* __sun */
 #endif
 	}
 	if (c != 'r') {
@@ -845,7 +851,7 @@ getfile(void)
 	fp = nextip;
 	do {
 		if (--ninbuf < 0) {
-			ninbuf = read(io, genbuf, (int) bsize) - 1;
+			ninbuf = read(io, genbuf, bsize) - 1;
 			if (ninbuf < 0) {
 				if (lp != linebuf) {
 					lp++;

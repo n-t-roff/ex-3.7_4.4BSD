@@ -19,14 +19,14 @@ SHAREDIR=${PREFIX}/share/ex/${VERSION}_4.4BSD
 #
 # Either none or both of the next two lines needs to be uncommented
 #
-#D_SBRK=	-DUNIX_SBRK
-#MALLOC_C=mapmalloc.c
+D_SBRK=	-DUNIX_SBRK
+MALLOC_C=mapmalloc.c
 #
 PROG=	ex
 SUBDIR=	ex3.7recover ex3.7preserve
 DBG_CFLAGS=-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls \
-	-fsanitize=undefined -fsanitize=integer -fsanitize=address
-_CFLAGS=-Wall -Wextra #${DBG_CFLAGS}
+	-fsanitize=undefined -fsanitize=integer #-fsanitize=address
+_CFLAGS=-Wall -Wextra ${DEFINES} #${DBG_CFLAGS}
 _CPPFLAGS=-DTABS=8 -DLISPCODE -DCHDIR -DUCVISUAL -DVMUNIX -DFASTTAG -DUSG3TTY \
 	${D_SBRK} -DLIBEXECDIR='"${LIBEXECDIR}"'
 _LDFLAGS=-s
@@ -40,7 +40,6 @@ OBJS=	${SRCS:.c=.o}
 # There's a boostrap problem here -- ex is necessary to build ex_vars.h.
 # The file ex_vars.h.init can be used to build a version of ex to start
 # with.
-CLEANFILES=ex_vars.h
 
 all: ${PROG}
 	for i in ${SUBDIR}; do \
@@ -52,6 +51,8 @@ all: ${PROG}
 
 ${PROG}: ${OBJS}
 	${CC} ${CFLAGS} ${_CFLAGS} ${LDFLAGS} ${_LDFLAGS} -o $@ ${OBJS} ${LDADD}
+
+${OBJS}: ex_vars.h
 
 install: ${BINDIR} ${LIBEXECDIR} ${MANDIR}/man1 ${SHAREDIR}
 	install ${PROG} ${BINDIR}/
@@ -93,7 +94,7 @@ clean:
 distclean: clean
 	rm -f Makefile config.log
 
-ex_vars.h: ex_data.c
+ex_vars.h: ex_data.c Makefile.in
 	csh -f makeoptions ex_data.c ${CPP} ${_CPPFLAGS}
 
 .c.o:

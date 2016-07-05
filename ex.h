@@ -52,7 +52,6 @@
  * of additional terminal descriptions you add to the termcap data base.
  */
 
-#define	MAXBSIZE	BUFSIZ	/* Maximum block size */
 #include <sys/ioctl.h>
 #ifndef	vms
 #include <sys/param.h>
@@ -207,7 +206,7 @@ var	short	erfile;		/* Error message file unit */
 #endif
 var	line	*fendcore;	/* First address in line pointer space */
 var	char	file[FNSIZE];	/* Working file name */
-var	char	genbuf[MAXBSIZE]; /* Working buffer when manipulating linebuf */
+var	char	genbuf[LBSIZE]; /* Working buffer when manipulating linebuf */
 var	bool	hush;		/* Command line option - was given, hush up! */
 var	char	*globp;		/* (Untyped) input string to command mode */
 var	bool	holdcm;		/* Don't cursor address */
@@ -286,7 +285,7 @@ var	long	bsize;		/* Block size for disk i/o */
 var	char	altfile[FNSIZE];	/* Alternate file name */
 extern	 char	direct[ONMSZ];		/* Temp file goes here */
 extern	 char	shell[ONMSZ];		/* Copied to be settable */
-extern	 char	ttytype[ONMSZ];		/* A long and pretty name */
+extern	 char	ex_ttytype[ONMSZ];		/* A long and pretty name */
 var	char	uxb[UXBSIZE + 2];	/* Last !command for !! */
 
 /*
@@ -363,7 +362,7 @@ char	*getpass();
 extern	void	(*Outchar)();
 extern	void	(*Pline)();
 extern	void	(*Put_char)();
-sig_t	oldhup;
+struct	sigaction	oldhup;
 void	(*setlist(bool))();
 int	(*setnorm())();
 int	(*setnorm())();

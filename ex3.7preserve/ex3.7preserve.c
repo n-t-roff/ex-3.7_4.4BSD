@@ -42,6 +42,9 @@ static char sccsid[] = "@(#)ex3.7preserve.c	8.1 (Berkeley) 6/9/93";
 #endif /* not lint */
 
 #include <sys/param.h>
+#ifdef HAVE_NETDB_H
+# include <netdb.h>
+#endif
 #include <sys/stat.h>
 #include <dirent.h>
 #include <fcntl.h>
@@ -79,7 +82,7 @@ static char sccsid[] = "@(#)ex3.7preserve.c	8.1 (Berkeley) 6/9/93";
 #define HBLKS	1
 #define	LBLKS	125
 #endif
-#define	FNSIZE	128
+#define	FNSIZE	4096
 
 struct 	header {
 	time_t	Time;			/* Time temp file last updated */

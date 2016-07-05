@@ -31,9 +31,9 @@ ex - $TMP2 <<'X'
 	" delete junk (all but data lines)
 	g/^[ 	]*$/d
 	1,/option options/d
-	/}/-1,$d
+	/};/-1,$d
 	" get rid of all of line but option name
-	1,$s/[ 	]*"//
+	1,$s/[ 	]*{[ 	]*"//
 	1,$s/".*//
 	" begin kludge since options start at 0 but cat -n starts at 1
 	"              move first to end and later move it back and renumber

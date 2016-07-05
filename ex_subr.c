@@ -500,7 +500,7 @@ short	vcntcol;
 int
 qcolumn(char *lim, char *gp)
 {
-	register int x;
+	int x = 0;
 	void (*OO)();
 
 	OO = Outchar;
@@ -886,7 +886,7 @@ preserve(void)
 	tflush();
 #endif
 	synctmp();
-	pid = vfork();
+	pid = fork();
 	if (pid < 0)
 		return (0);
 	if (pid == 0) {
