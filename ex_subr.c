@@ -380,7 +380,7 @@ int
 morelines(void)
 {
 #ifdef UNIX_SBRK
-	if ((int) sbrk(1024 * sizeof (line)) == -1)
+	if (sbrk(1024 * sizeof (line)) == (void *)-1)
 		return (-1);
 	endcore += 1024;
 #else

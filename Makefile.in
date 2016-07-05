@@ -52,7 +52,7 @@ all: ${PROG}
 ${PROG}: ${OBJS}
 	${CC} ${CFLAGS} ${_CFLAGS} ${LDFLAGS} ${_LDFLAGS} -o $@ ${OBJS} ${LDADD}
 
-${OBJS}: ex_vars.h
+${OBJS}: #ex_vars.h
 
 install: ${BINDIR} ${LIBEXECDIR} ${MANDIR}/man1 ${SHAREDIR}
 	install ${PROG} ${BINDIR}/
