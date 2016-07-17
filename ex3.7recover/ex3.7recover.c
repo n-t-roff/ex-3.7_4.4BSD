@@ -44,7 +44,7 @@ struct svfile {
 };
 
 char xstr[1];		/* make loader happy */
-short tfile = -1;	/* ditto */
+int tfile = -1;	/* ditto */
 
 #if __STDC__
 void	fpr(const char *fmt, ...);
@@ -537,7 +537,7 @@ scrapbad(void)
 	register line *ip;
 	struct stat stbuf;
 	off_t size, maxt;
-	int bno, cnt, bad, was;
+	int bno, cnt = 0, bad, was;
 	char bk[BUFSIZ];
 
 	ignore(fstat(tfile, &stbuf));

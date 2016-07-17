@@ -564,7 +564,7 @@ compile(int eof, int oknl)
 
 	if (isalpha(eof) || isdigit(eof))
 		error("Regular expressions cannot be delimited by letters or digits");
-	ep = expbuf;
+	lastep = ep = expbuf;
 	c = ex_getchar();
 	if (eof == '\\')
 		switch (c) {

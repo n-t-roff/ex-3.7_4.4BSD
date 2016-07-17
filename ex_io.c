@@ -662,6 +662,8 @@ wop(bool dofname)
 
 	c = 0;
 	exclam = 0;
+	saddr1=addr1;
+	saddr2=addr2;
 	if (dofname) {
 		if (peekchar() == '!')
 			exclam++, ignchar();
@@ -674,8 +676,6 @@ wop(bool dofname)
 	} else {
 		if (savedfile[0] == 0)
 			error("No file|No current filename");
-		saddr1=addr1;
-		saddr2=addr2;
 		addr1=one;
 		addr2=dol;
 		CP(file, savedfile);

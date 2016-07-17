@@ -100,10 +100,10 @@ main(int ac, char **av)
 #endif
 	register char *cp;
 	register int c;
-	bool recov = 0;
-	bool ivis;
-	bool itag = 0;
-	bool fast = 0;
+	static bool recov = 0;
+	static bool ivis;
+	static bool itag = 0;
+	static bool fast = 0;
 	extern void onemt();
 #ifdef TRACE
 	register char *tracef;

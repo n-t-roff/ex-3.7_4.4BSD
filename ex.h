@@ -245,7 +245,7 @@ var	bool	seenprompt;	/* 1 if have gotten user input */
 var	bool	shudclob;	/* Have a prompt to clobber (e.g. on ^D) */
 var	int	status;		/* Status returned from wait() */
 var	int	tchng;		/* If nonzero, then [Modified] */
-extern	short	tfile;		/* Temporary file unit */
+extern	int	tfile;		/* Temporary file unit */
 var	bool	vcatch;		/* Want to catch an error (open/visual) */
 var	jmp_buf	vreslab;	/* For error throws to a visual catch */
 var	bool	writing;	/* 1 if in middle of a file write */

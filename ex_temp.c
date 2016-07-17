@@ -53,8 +53,8 @@ static void YANKline(void);
 char	tfname[40];
 char	rfname[40];
 int	havetmp;
-short	tfile = -1;
-short	rfile = -1;
+int	tfile = -1;
+int	rfile = -1;
 
 void
 fileinit(void)

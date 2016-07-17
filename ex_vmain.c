@@ -936,6 +936,10 @@ doinit:
 				pofix();
 				shouldpo = 0;
 			}
+			onumber = value(NUMBER);
+			olist = value(LIST);
+			OPline = Pline;
+			OPutchar = Put_char;
 			CATCH
 				/*
 				 * Save old values of options so we can

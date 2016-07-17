@@ -164,7 +164,7 @@ unixex(char *opt, char *up, int newstdin, int mode)
 	}
 	if (pid == 0) {
 		if (up) {
-			register char *cp = up;
+			char *cp = up;
 			while (*cp)
 				*cp++ &= TRIM;
 		}
