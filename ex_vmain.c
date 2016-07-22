@@ -732,7 +732,7 @@ insrt:
 			 * use insert mode on intelligent terminals.
 			 */
 			if (!vreg && DEL[0]) {
-				forbid ((DEL[0] & (QUOTE|TRIM)) == OVERBUF);
+				forbid ((DEL[0] & (OVERBUF|TRIM)) == OVERBUF);
 				vglobp = DEL;
 				ungetkey(c == 'p' ? 'a' : 'i');
 				goto reread;

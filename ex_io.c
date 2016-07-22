@@ -885,9 +885,11 @@ getfile(void)
 		}
 		if (c & QUOTE) {
 			cntodd++;
+#ifndef BIT8
 			c &= TRIM;
 			if (c == 0)
 				continue;
+#endif
 		}
 		*lp++ = c;
 	} while (c != '\n');
@@ -1073,7 +1075,11 @@ iostats(void)
 		noonl();
 		flush();
 	}
-	return (cntnull != 0 || cntodd != 0);
+	return (cntnull != 0
+#ifndef BIT8
+	    || cntodd != 0
+#endif
+	    );
 }
 
 #ifdef USG

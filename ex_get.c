@@ -120,7 +120,11 @@ top:
 		inputline[c] = 0;
 		for (c--; c >= 0; c--)
 			if (inputline[c] == 0)
+#ifdef BIT8
+				inputline[c] = ' ';
+#else
 				inputline[c] = QUOTE;
+#endif
 		input = inputline;
 		goto top;
 	}

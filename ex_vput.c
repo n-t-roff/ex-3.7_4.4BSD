@@ -847,7 +847,11 @@ vishft(void)
 	if (IN && tshft) {
 		i = tshft;
 		do
+#ifdef BIT8
+			*--up = ' ';
+#else
 			*--up = ' ' | QUOTE;
+#endif
 		while (--i);
 	}
 	hold = oldhold;
@@ -974,18 +978,24 @@ viin(int c)
 					if (tabslack >= slakused)
 						continue;
 				}
+#ifdef BIT8
+				*tp = ' ';
+#else
 				*tp = ' ' | QUOTE;
+#endif
 			}
 		}
 		/*
 		 * Blank out the shifted positions to be tab positions.
 		 */
+#ifndef BIT8
 		if (shft) {
 			tp = vtube0 + tabend + shft;
 			for (i = tabsize - (inssiz - doomed) + shft; i > 0; i--)
 				if ((*--tp & QUOTE) == 0)
 					*tp = ' ' | QUOTE;
 		}
+#endif
 	}
 
 	/*
@@ -1132,7 +1142,11 @@ vputchar(int c)
 			 * A ``space''.
 			 */
 			if ((hold & HOLDPUPD) == 0)
+#ifdef BIT8
+				*tp = ' ';
+#else
 				*tp = QUOTE;
+#endif
 			destcol++;
 			return;
 		}

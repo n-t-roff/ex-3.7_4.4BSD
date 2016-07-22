@@ -256,7 +256,7 @@ var	char	workcmd[5];	/* Temporary for lastcmd */
  */
 #define	INF		30000
 #define	LASTLINE	LINE(vcnt)
-#define	OVERBUF		QUOTE
+#define	OVERBUF		RE_QUOTE
 #define	beep		obeep
 #define	cindent()	((outline - vlinfo[vcline].vliny) * WCOLS + outcol)
 #define	vputp(cp, cnt)	tputs(cp, cnt, vputch)

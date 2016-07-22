@@ -278,7 +278,7 @@ readecho(int c)
 	vgoto(WECHO, 1);
 	cursor = linebuf; linebuf[0] = 0; genbuf[0] = c;
 	if (peekbr()) {
-		if (!INS[0] || (INS[0] & (QUOTE|TRIM)) == OVERBUF)
+		if (!INS[0] || (INS[0] & (OVERBUF|TRIM)) == OVERBUF)
 			goto blewit;
 		vglobp = INS;
 	}
@@ -333,7 +333,7 @@ addtext(char *cp)
 	if (vglobp)
 		return;
 	addto(INS, cp);
-	if ((INS[0] & (QUOTE|TRIM)) == OVERBUF)
+	if ((INS[0] & (OVERBUF|TRIM)) == OVERBUF)
 		lastcmd[0] = 0;
 }
 
@@ -364,7 +364,7 @@ static void
 addto(char *buf, char *str)
 {
 
-	if ((buf[0] & (QUOTE|TRIM)) == OVERBUF)
+	if ((buf[0] & (OVERBUF|TRIM)) == OVERBUF)
 		return;
 	if (strlen(buf) + strlen(str) + 1 >= VBSIZE) {
 		buf[0] = OVERBUF;

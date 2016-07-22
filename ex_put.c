@@ -126,6 +126,11 @@ normchar(int c)
 
 		default:
 			c &= TRIM;
+#ifdef BIT8
+			if ((c < ' ' && (c != '\b' || !OS) && c != '\n'
+			    && c != '\t') || c == DELETE)
+				ex_putchar('^'), c = ctlof(c);
+#endif
 		}
 	else if ((c < ' ' && (c != '\b' || !OS) && c != '\n' && c != '\t') || c == DELETE)
 		ex_putchar('^'), c = ctlof(c);

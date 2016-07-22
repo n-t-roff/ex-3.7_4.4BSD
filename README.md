@@ -44,12 +44,3 @@ $ make distclean
   and
   [ex/paper.pdf](http://n-t-roff.github.io/ex/3.7_4.4BSD/ex/paper.pdf)
   describe this vi version in detail.
-
-**Attention**:
-The original `vi` had not been 8-bit clean!
-Moreover it does automatically change all 8-bit characters to 7-bit
-in the whole file even if no editing is done!
-This will e.g. destroy all UTF-8 characters.
-`vi` gives you a hint in this case by requiring `:w!` for writing
-even if you have UNIX write permissions
-(so be warned if `vi` asks for `:w!` unexpectedly).
