@@ -25,12 +25,12 @@ SHAREDIR=${PREFIX}/share/ex/${VERSION}_4.4BSD
 #
 PROG=	ex
 SUBDIR=	ex3.7recover ex3.7preserve
-DBG_CFLAGS=-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls \
+DBG_CFLAGS=#-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls \
 	-fsanitize=undefined -fsanitize=integer -fsanitize=address
-_CFLAGS=-Wall -Wextra ${DEFINES} ${DBG_CFLAGS}
+_CFLAGS=${CFLAGS} -Wall -Wextra ${DEFINES} ${DBG_CFLAGS}
 _CPPFLAGS=-DTABS=8 -DLISPCODE -DCHDIR -DUCVISUAL -DVMUNIX -DFASTTAG -DUSG3TTY \
 	${D_SBRK} -DLIBEXECDIR='"${LIBEXECDIR}"' -DBIT8
-_LDFLAGS=#-s
+_LDFLAGS=${LDFLAGS} ${DBG_CFLAGS} ${DEFINES} -s
 SRCS=	ex.c ex_addr.c ex_cmds.c ex_cmds2.c ex_cmdsub.c ex_data.c ex_extern.c \
 	ex_get.c ex_io.c ex_put.c ex_re.c ex_set.c ex_subr.c ex_tagio.c \
 	ex_temp.c ex_tty.c ex_unix.c ex_v.c ex_vadj.c ex_vget.c ex_vmain.c \
@@ -51,7 +51,7 @@ all: ${PROG}
 	done
 
 ${PROG}: ${OBJS}
-	${CC} ${CFLAGS} ${_CFLAGS} ${LDFLAGS} ${_LDFLAGS} -o $@ ${OBJS} ${LDADD}
+	${CC} ${_CFLAGS} ${_LDFLAGS} -o $@ ${OBJS} ${LDADD}
 
 ${OBJS}: #ex_vars.h
 
@@ -99,4 +99,4 @@ ex_vars.h: ex_data.c Makefile.in
 	csh -f makeoptions ex_data.c ${CPP} ${_CPPFLAGS}
 
 .c.o:
-	${CC} ${CFLAGS} ${_CFLAGS} ${_CPPFLAGS} -c $<
+	${CC} ${_CFLAGS} ${_CPPFLAGS} -c $<
