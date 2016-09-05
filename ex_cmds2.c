@@ -514,6 +514,7 @@ vcontin(bool ask)
 		}
 		if (ask) {
 			merror("[Hit return to continue] ");
+			ex_getline(*dot);
 			flush();
 		}
 #ifndef CBREAK
